@@ -1,0 +1,14 @@
+-- Seed resources table
+-- This creates sample resource/document records
+
+INSERT INTO resources (title, description, category, file_name, file_type, file_size, file_url, tags, download_count, status, uploaded_by, created_at, updated_at)
+VALUES
+  ('Disaster Preparedness Guide 2025', 'Comprehensive guide on disaster preparedness for households and communities', 'guidelines', 'disaster-preparedness-guide-2025.pdf', 'application/pdf', '2.5 MB', '/resources/disaster-preparedness-guide.pdf', ARRAY['preparedness', 'guide', 'household'], 156, 'active', '00000000-0000-0000-0000-000000000001', NOW(), NOW()),
+  ('Evacuation Procedures Manual', 'Step-by-step procedures for safe evacuation during emergencies', 'procedures', 'evacuation-procedures.pdf', 'application/pdf', '1.8 MB', '/resources/evacuation-procedures.pdf', ARRAY['evacuation', 'procedures', 'emergency'], 89, 'active', '00000000-0000-0000-0000-000000000001', NOW(), NOW()),
+  ('First Aid Quick Reference', 'Quick reference guide for basic first aid and emergency medical response', 'training', 'first-aid-reference.pdf', 'application/pdf', '1.2 MB', '/resources/first-aid-reference.pdf', ARRAY['first aid', 'medical', 'training'], 234, 'active', '00000000-0000-0000-0000-000000000002', NOW(), NOW()),
+  ('Flood Safety Tips', 'Essential safety tips and precautions during flood situations', 'guidelines', 'flood-safety-tips.pdf', 'application/pdf', '800 KB', '/resources/flood-safety-tips.pdf', ARRAY['flood', 'safety', 'tips'], 178, 'active', '00000000-0000-0000-0000-000000000001', NOW(), NOW()),
+  ('Fire Prevention Checklist', 'Comprehensive checklist for fire prevention in homes and establishments', 'checklists', 'fire-prevention-checklist.pdf', 'application/pdf', '600 KB', '/resources/fire-prevention-checklist.pdf', ARRAY['fire', 'prevention', 'checklist'], 145, 'active', '00000000-0000-0000-0000-000000000002', NOW(), NOW()),
+  ('Emergency Contact Directory', 'Complete directory of emergency contacts and hotlines', 'directories', 'emergency-contacts.pdf', 'application/pdf', '500 KB', '/resources/emergency-contacts.pdf', ARRAY['contacts', 'hotlines', 'directory'], 312, 'active', '00000000-0000-0000-0000-000000000001', NOW(), NOW()),
+  ('Earthquake Preparedness Kit', 'Guide on preparing an earthquake emergency kit for your family', 'guidelines', 'earthquake-kit-guide.pdf', 'application/pdf', '1.5 MB', '/resources/earthquake-kit-guide.pdf', ARRAY['earthquake', 'preparedness', 'kit'], 98, 'active', '00000000-0000-0000-0000-000000000002', NOW(), NOW()),
+  ('Community Disaster Plan Template', 'Template for creating a community-level disaster response plan', 'templates', 'community-disaster-plan.docx', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document', '450 KB', '/resources/community-plan-template.docx', ARRAY['planning', 'template', 'community'], 67, 'active', '00000000-0000-0000-0000-000000000001', NOW(), NOW())
+ON CONFLICT DO NOTHING;

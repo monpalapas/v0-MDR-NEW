@@ -48,26 +48,11 @@ export default function AdminDashboard() {
     { id: 4, type: "personnel", message: "New personnel added to Emergency Response team", time: "2 days ago" },
   ]
 
-  return (
-    <div className="flex h-screen bg-blue-50">
-      {/* Sidebar */}
-      <div className="h-full w-72 sm:w-80 lg:w-64 flex-shrink-0">
-        <div className="h-full overflow-y-auto">
-          <AdminSidebar
-            isOpen={sidebarOpen}
-            onClose={() => setSidebarOpen(false)}
-            activeSection={activeSection}
-            onSectionChange={setActiveSection}
-          />
-        </div>
-      </div>
-
-      {/* Main content */}
-      <div className="flex flex-col flex-1 min-w-0">
-        <AdminHeader onMenuToggle={() => setSidebarOpen((open) => !open)} onLogout={() => {}} />
-
-        <main className="flex-1 overflow-y-auto p-6">
-          <div className="max-w-7xl mx-auto">
+  const renderContent = () => {
+    switch (activeSection) {
+      case "dashboard":
+        return (
+          <>
             {/* Header */}
             <div className="mb-8">
               <h1 className="text-3xl font-bold text-blue-950 mb-2">Dashboard Overview</h1>
@@ -147,7 +132,271 @@ export default function AdminDashboard() {
                 </CardContent>
               </Card>
             </div>
+          </>
+        )
+
+      case "drrm-council":
+        return (
+          <div>
+            <h1 className="text-3xl font-bold text-blue-950 mb-4">DRRM Council</h1>
+            <Card>
+              <CardContent className="p-6">
+                <p className="text-gray-600">DRRM Council management content will be displayed here.</p>
+              </CardContent>
+            </Card>
           </div>
+        )
+
+      case "personnel":
+        return (
+          <div>
+            <h1 className="text-3xl font-bold text-blue-950 mb-4">MDRRMO Personnel</h1>
+            <Card>
+              <CardContent className="p-6">
+                <p className="text-gray-600">Personnel management content will be displayed here.</p>
+              </CardContent>
+            </Card>
+          </div>
+        )
+
+      case "announcement":
+        return (
+          <div>
+            <h1 className="text-3xl font-bold text-blue-950 mb-4">Announcements</h1>
+            <Card>
+              <CardContent className="p-6">
+                <p className="text-gray-600">Announcement management content will be displayed here.</p>
+              </CardContent>
+            </Card>
+          </div>
+        )
+
+      case "weather":
+        return (
+          <div>
+            <h1 className="text-3xl font-bold text-blue-950 mb-4">Weather Updates</h1>
+            <Card>
+              <CardContent className="p-6">
+                <p className="text-gray-600">Weather updates management content will be displayed here.</p>
+              </CardContent>
+            </Card>
+          </div>
+        )
+
+      case "news":
+        return (
+          <div>
+            <h1 className="text-3xl font-bold text-blue-950 mb-4">News & Advisories</h1>
+            <Card>
+              <CardContent className="p-6">
+                <p className="text-gray-600">News and advisories management content will be displayed here.</p>
+              </CardContent>
+            </Card>
+          </div>
+        )
+
+      case "activities":
+        return (
+          <div>
+            <h1 className="text-3xl font-bold text-blue-950 mb-4">Events & Activities</h1>
+            <Card>
+              <CardContent className="p-6">
+                <p className="text-gray-600">Events and activities management content will be displayed here.</p>
+              </CardContent>
+            </Card>
+          </div>
+        )
+
+      case "video":
+        return (
+          <div>
+            <h1 className="text-3xl font-bold text-blue-950 mb-4">Video Gallery</h1>
+            <Card>
+              <CardContent className="p-6">
+                <p className="text-gray-600">Video gallery management content will be displayed here.</p>
+              </CardContent>
+            </Card>
+          </div>
+        )
+
+      case "gallery":
+        return (
+          <div>
+            <h1 className="text-3xl font-bold text-blue-950 mb-4">Photo Gallery</h1>
+            <Card>
+              <CardContent className="p-6">
+                <p className="text-gray-600">Photo gallery management content will be displayed here.</p>
+              </CardContent>
+            </Card>
+          </div>
+        )
+
+      case "documents":
+        return (
+          <div>
+            <h1 className="text-3xl font-bold text-blue-950 mb-4">Public Documents</h1>
+            <Card>
+              <CardContent className="p-6">
+                <p className="text-gray-600">Public documents management content will be displayed here.</p>
+              </CardContent>
+            </Card>
+          </div>
+        )
+
+      case "maps":
+        return (
+          <div>
+            <h1 className="text-3xl font-bold text-blue-950 mb-4">Hazard Maps</h1>
+            <Card>
+              <CardContent className="p-6">
+                <p className="text-gray-600">Hazard maps management content will be displayed here.</p>
+              </CardContent>
+            </Card>
+          </div>
+        )
+
+      case "incident":
+        return (
+          <div>
+            <h1 className="text-3xl font-bold text-blue-950 mb-4">Incident Reports</h1>
+            <Card>
+              <CardContent className="p-6">
+                <p className="text-gray-600">Incident report management content will be displayed here.</p>
+              </CardContent>
+            </Card>
+          </div>
+        )
+
+      case "public-message":
+        return (
+          <div>
+            <h1 className="text-3xl font-bold text-blue-950 mb-4">Public Messages</h1>
+            <Card>
+              <CardContent className="p-6">
+                <p className="text-gray-600">Public message management content will be displayed here.</p>
+              </CardContent>
+            </Card>
+          </div>
+        )
+
+      case "quick-links":
+        return (
+          <div>
+            <h1 className="text-3xl font-bold text-blue-950 mb-4">Quick Links</h1>
+            <Card>
+              <CardContent className="p-6">
+                <p className="text-gray-600">Quick links management content will be displayed here.</p>
+              </CardContent>
+            </Card>
+          </div>
+        )
+
+      case "alerts":
+        return (
+          <div>
+            <h1 className="text-3xl font-bold text-blue-950 mb-4">Alerts</h1>
+            <Card>
+              <CardContent className="p-6">
+                <p className="text-gray-600">Alert management content will be displayed here.</p>
+              </CardContent>
+            </Card>
+          </div>
+        )
+
+      case "hotlines":
+        return (
+          <div>
+            <h1 className="text-3xl font-bold text-blue-950 mb-4">Hotlines</h1>
+            <Card>
+              <CardContent className="p-6">
+                <p className="text-gray-600">Hotlines management content will be displayed here.</p>
+              </CardContent>
+            </Card>
+          </div>
+        )
+
+      case "barangay":
+        return (
+          <div>
+            <h1 className="text-3xl font-bold text-blue-950 mb-4">Barangay Portal</h1>
+            <Card>
+              <CardContent className="p-6">
+                <p className="text-gray-600">Barangay portal management content will be displayed here.</p>
+              </CardContent>
+            </Card>
+          </div>
+        )
+
+      case "response":
+        return (
+          <div>
+            <h1 className="text-3xl font-bold text-blue-950 mb-4">Response Tracking</h1>
+            <Card>
+              <CardContent className="p-6">
+                <p className="text-gray-600">Response tracking content will be displayed here.</p>
+              </CardContent>
+            </Card>
+          </div>
+        )
+
+      case "analytics":
+        return (
+          <div>
+            <h1 className="text-3xl font-bold text-blue-950 mb-4">Analytics</h1>
+            <Card>
+              <CardContent className="p-6">
+                <p className="text-gray-600">Analytics content will be displayed here.</p>
+              </CardContent>
+            </Card>
+          </div>
+        )
+
+      case "settings":
+        return (
+          <div>
+            <h1 className="text-3xl font-bold text-blue-950 mb-4">Settings</h1>
+            <Card>
+              <CardContent className="p-6">
+                <p className="text-gray-600">Settings content will be displayed here.</p>
+              </CardContent>
+            </Card>
+          </div>
+        )
+
+      default:
+        return (
+          <div>
+            <h1 className="text-3xl font-bold text-blue-950 mb-4">Page Not Found</h1>
+            <Card>
+              <CardContent className="p-6">
+                <p className="text-gray-600">The requested section could not be found.</p>
+              </CardContent>
+            </Card>
+          </div>
+        )
+    }
+  }
+
+  return (
+    <div className="flex h-screen bg-blue-50">
+      {/* Sidebar */}
+      <div className="h-full w-72 sm:w-80 lg:w-64 flex-shrink-0">
+        <div className="h-full overflow-y-auto">
+          <AdminSidebar
+            isOpen={sidebarOpen}
+            onClose={() => setSidebarOpen(false)}
+            activeSection={activeSection}
+            onSectionChange={setActiveSection}
+          />
+        </div>
+      </div>
+
+      {/* Main content */}
+      <div className="flex flex-col flex-1 min-w-0">
+        <AdminHeader onMenuToggle={() => setSidebarOpen((open) => !open)} onLogout={() => {}} />
+
+        <main className="flex-1 overflow-y-auto p-6">
+          <div className="max-w-7xl mx-auto">{renderContent()}</div>
         </main>
 
         <footer className="sticky bottom-0 w-full bg-blue-950 text-white border-t-4 border-yellow-500 shadow-lg z-50">

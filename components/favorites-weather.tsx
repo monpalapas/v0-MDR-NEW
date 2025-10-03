@@ -27,8 +27,6 @@ export default function FavoritesWeather() {
   const [newLocation, setNewLocation] = useState({ name: "", lat: "", lon: "" })
   const [loading, setLoading] = useState<{ [key: string]: boolean }>({})
 
-  const apiKey = process.env.NEXT_PUBLIC_OPENWEATHER_API_KEY || "1c2358da5a8a232a21c69bada746fe57"
-
   // Load favorites from localStorage on mount
   useEffect(() => {
     const stored = localStorage.getItem("weatherFavorites")
@@ -54,21 +52,14 @@ export default function FavoritesWeather() {
   const fetchWeatherForLocation = async (location: FavoriteLocation) => {
     setLoading((prev) => ({ ...prev, [location.id]: true }))
     try {
-      const response = await fetch(
-        `https://api.openweathermap.org/data/2.5/weather?lat=${location.lat}&lon=${location.lon}&appid=${apiKey}&units=metric`,
-      )
+      const response = await fetch(`/api/weather?lat=${location.lat}&lon=${location.lon}`)
+
       if (!response.ok) throw new Error("Failed to fetch weather")
       const data = await response.json()
 
       setWeatherData((prev) => ({
         ...prev,
-        [location.id]: {
-          temp: Math.round(data.main.temp),
-          description: data.weather[0].description,
-          icon: data.weather[0].icon,
-          humidity: data.main.humidity,
-          windSpeed: data.wind.speed,
-        },
+        [location.id]: data,
       }))
     } catch (error) {
       console.error("Error fetching weather:", error)

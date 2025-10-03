@@ -1,0 +1,12 @@
+-- Seed videos table
+-- This creates sample video records
+
+INSERT INTO videos (title, description, video_url, thumbnail_url, category, tags, duration, views, status, uploaded_by, created_at, updated_at)
+VALUES
+  ('Basic First Aid Tutorial', 'Learn essential first aid techniques including CPR, wound care, and emergency response', 'https://www.youtube.com/watch?v=dQw4w9WgXcQ', 'https://images.unsplash.com/photo-1516574187841-cb9cc2ca948b?w=400', 'training', 'first aid, CPR, medical', '15:30', 1245, 'active', '00000000-0000-0000-0000-000000000001', NOW() - INTERVAL '20 days', NOW()),
+  ('Earthquake Safety: Drop, Cover, Hold', 'Demonstration of proper earthquake safety procedures', 'https://www.youtube.com/watch?v=dQw4w9WgXcQ', 'https://images.unsplash.com/photo-1534237710431-e2fc698436d0?w=400', 'education', 'earthquake, safety, procedures', '08:45', 892, 'active', '00000000-0000-0000-0000-000000000002', NOW() - INTERVAL '25 days', NOW()),
+  ('Fire Extinguisher Usage Guide', 'Step-by-step guide on how to properly use different types of fire extinguishers', 'https://www.youtube.com/watch?v=dQw4w9WgXcQ', 'https://images.unsplash.com/photo-1587825140708-dfaf72ae4b04?w=400', 'training', 'fire safety, extinguisher, tutorial', '10:20', 1567, 'active', '00000000-0000-0000-0000-000000000001', NOW() - INTERVAL '30 days', NOW()),
+  ('Flood Preparedness and Response', 'Comprehensive guide on preparing for and responding to flood situations', 'https://www.youtube.com/watch?v=dQw4w9WgXcQ', 'https://images.unsplash.com/photo-1547683905-f686c993aae5?w=400', 'education', 'flood, preparedness, response', '12:15', 734, 'active', '00000000-0000-0000-0000-000000000002', NOW() - INTERVAL '35 days', NOW()),
+  ('Emergency Evacuation Procedures', 'Learn proper evacuation procedures for different types of emergencies', 'https://www.youtube.com/watch?v=dQw4w9WgXcQ', 'https://images.unsplash.com/photo-1582213782179-e0d53f98f2ca?w=400', 'training', 'evacuation, procedures, emergency', '11:30', 1023, 'active', '00000000-0000-0000-0000-000000000001', NOW() - INTERVAL '40 days', NOW()),
+  ('Disaster Preparedness for Families', 'Essential tips for families to prepare for various disasters', 'https://www.youtube.com/watch?v=dQw4w9WgXcQ', 'https://images.unsplash.com/photo-1559027615-cd4628902d4a?w=400', 'education', 'preparedness, family, disaster', '14:00', 1890, 'active', '00000000-0000-0000-0000-000000000002', NOW() - INTERVAL '45 days', NOW())
+ON CONFLICT DO NOTHING;

@@ -2,7 +2,18 @@
 
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
-import { LayoutDashboard, Users, ClipboardList, Calendar, BarChart3, Settings, X } from "lucide-react"
+import {
+  LayoutDashboard,
+  ClipboardList,
+  Settings,
+  X,
+  ChevronDown,
+  ChevronRight,
+  Info,
+  Megaphone,
+  FolderOpen,
+} from "lucide-react"
+import { useState } from "react"
 
 interface AdminSidebarProps {
   isOpen: boolean
@@ -11,16 +22,86 @@ interface AdminSidebarProps {
   onSectionChange: (section: string) => void
 }
 
-const menuItems = [
-  { id: "dashboard", label: "Dashboard", icon: LayoutDashboard },
-  { id: "personnel", label: "Personnel", icon: Users },
-  { id: "response", label: "Response Tracking", icon: ClipboardList },
-  { id: "activities", label: "Activities", icon: Calendar },
-  { id: "analytics", label: "Analytics", icon: BarChart3 },
-  { id: "settings", label: "Settings", icon: Settings },
+const menuSections = [
+  {
+    id: "about",
+    label: "About Us",
+    icon: Info,
+    items: [
+      { id: "drrm-council", label: "DRRM Council", path: "/components/admin/drrm-council-management.tsx" },
+      { id: "personnel", label: "MDRRMO Personnel", path: "/components/admin/personnel-management.tsx" },
+    ],
+  },
+  {
+    id: "information",
+    label: "Information",
+    icon: Megaphone,
+    items: [
+      { id: "announcement", label: "Announcement", path: "/components/admin/announcement-management.tsx" },
+      { id: "weather", label: "Weather Updates", path: "" },
+      { id: "news", label: "News & Advisories", path: "/components/admin/news-management.tsx" },
+      { id: "activities", label: "Events & Activities", path: "/components/admin/activities-management.tsx" },
+    ],
+  },
+  {
+    id: "resources",
+    label: "Resources",
+    icon: FolderOpen,
+    items: [
+      { id: "video", label: "Video Gallery", path: "/components/admin/video-management.tsx" },
+      { id: "gallery", label: "Photo Gallery", path: "/components/admin/gallery-management.tsx" },
+      { id: "documents", label: "Public Documents", path: "/components/admin/resources-management.tsx" },
+      { id: "maps", label: "Hazard Maps", path: "/components/admin/maps-management.tsx" },
+    ],
+  },
+  {
+    id: "reports",
+    label: "Reports",
+    icon: ClipboardList,
+    items: [
+      { id: "incident", label: "Incident Report", path: "/components/admin/incident-management.tsx" },
+      { id: "public-message", label: "Public Message", path: "/components/admin/public-message.tsx" },
+    ],
+  },
+  {
+    id: "others",
+    label: "Others",
+    icon: LayoutDashboard,
+    items: [
+      { id: "quick-links", label: "Quick Links", path: "/components/admin/quick-links-management.tsx" },
+      { id: "alerts", label: "Alert", path: "/components/admin/alerts-management.tsx" },
+      { id: "hotlines", label: "Hotlines", path: "/components/admin/hotline-management.tsx" },
+      { id: "barangay", label: "Barangay Portal", path: "/components/admin/barangay-portal.tsx" },
+    ],
+  },
+  {
+    id: "system",
+    label: "System Tools",
+    icon: Settings,
+    items: [
+      { id: "response", label: "Response Tracking", path: "" },
+      { id: "analytics", label: "Analytics", path: "" },
+      { id: "settings", label: "Settings", path: "" },
+    ],
+  },
 ]
 
 export function AdminSidebar({ isOpen, onClose, activeSection, onSectionChange }: AdminSidebarProps) {
+  const [expandedSections, setExpandedSections] = useState<string[]>([
+    "about",
+    "information",
+    "resources",
+    "reports",
+    "others",
+    "system",
+  ])
+
+  const toggleSection = (sectionId: string) => {
+    setExpandedSections((prev) =>
+      prev.includes(sectionId) ? prev.filter((id) => id !== sectionId) : [...prev, sectionId],
+    )
+  }
+
   return (
     <>
       {/* Mobile overlay */}
@@ -48,26 +129,50 @@ export function AdminSidebar({ isOpen, onClose, activeSection, onSectionChange }
           </div>
 
           {/* Navigation */}
-          <nav className="flex-1 space-y-1 p-4">
-            {menuItems.map((item) => {
-              const Icon = item.icon
-              const isActive = activeSection === item.id
+          <nav className="flex-1 overflow-y-auto space-y-1 p-4">
+            {menuSections.map((section) => {
+              const SectionIcon = section.icon
+              const isExpanded = expandedSections.includes(section.id)
 
               return (
-                <button
-                  key={item.id}
-                  onClick={() => {
-                    onSectionChange(item.id)
-                    onClose()
-                  }}
-                  className={cn(
-                    "flex w-full items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors",
-                    isActive ? "bg-yellow-500 text-blue-950" : "text-white hover:bg-blue-900",
+                <div key={section.id} className="space-y-1">
+                  {/* Section Header */}
+                  <button
+                    onClick={() => toggleSection(section.id)}
+                    className="flex w-full items-center justify-between rounded-lg px-3 py-2 text-sm font-semibold text-blue-200 hover:bg-blue-900 transition-colors"
+                  >
+                    <div className="flex items-center gap-3">
+                      <SectionIcon className="h-4 w-4" />
+                      <span className="uppercase text-xs tracking-wider">{section.label}</span>
+                    </div>
+                    {isExpanded ? <ChevronDown className="h-4 w-4" /> : <ChevronRight className="h-4 w-4" />}
+                  </button>
+
+                  {/* Section Items */}
+                  {isExpanded && (
+                    <div className="ml-4 space-y-1">
+                      {section.items.map((item) => {
+                        const isActive = activeSection === item.id
+
+                        return (
+                          <button
+                            key={item.id}
+                            onClick={() => {
+                              onSectionChange(item.id)
+                              onClose()
+                            }}
+                            className={cn(
+                              "flex w-full items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors",
+                              isActive ? "bg-yellow-500 text-blue-950" : "text-white hover:bg-blue-900",
+                            )}
+                          >
+                            {item.label}
+                          </button>
+                        )
+                      })}
+                    </div>
                   )}
-                >
-                  <Icon className="h-5 w-5" />
-                  {item.label}
-                </button>
+                </div>
               )
             })}
           </nav>
