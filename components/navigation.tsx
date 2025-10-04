@@ -1,9 +1,5 @@
-"use client"
-
 import type React from "react"
 import { useState, useCallback, useRef, useEffect } from "react"
-import Link from "next/link"
-import Image from "next/image"
 import { Search, MapPin, Menu, X, ChevronDown } from "lucide-react"
 
 export default function Navigation() {
@@ -74,31 +70,29 @@ export default function Navigation() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
           {/* Logo/Brand */}
-          <Link href="/" className="flex-shrink-0 flex items-center space-x-3 group" aria-label="Go to homepage">
-            <Image
-              src="https://res.cloudinary.com/dedcmctqk/image/upload/v1758626524/logome_qttbxo.webp" onError={e => e.currentTarget.src = '/images/design-mode/mdrrmo_logo.webp'}
+          <a href="/" className="flex-shrink-0 flex items-center space-x-3 group" aria-label="Go to homepage">
+            <img
+              src="https://res.cloudinary.com/dedcmctqk/image/upload/v1758626524/logome_qttbxo.webp"
               alt="MDRRMO Pio Duran Official Logo"
-              width={48}
-              height={48}
-              className="object-contain group-hover:scale-105 transition-transform"
-              priority
+              className="w-12 h-12 object-contain group-hover:scale-105 transition-transform"
+              onError={(e) => (e.currentTarget.src = '/images/design-mode/mdrrmo_logo.webp')}
             />
             <div className="text-white">
               <div className="text-lg font-bold text-yellow-500">MDRRMO</div>
               <div className="text-xs font-medium text-center">PIO DURAN</div>
             </div>
-          </Link>
+          </a>
 
           {/* Desktop Menu */}
           <div className="hidden md:block">
             <div className="ml-10 flex items-baseline space-x-2" role="menubar">
-              <Link
+              <a
                 href="/"
                 className="text-white hover:text-yellow-500 px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200 focus:ring-2 focus:ring-yellow-500 focus:ring-offset-2 focus:ring-offset-blue-950"
                 role="menuitem"
               >
                 Home
-              </Link>
+              </a>
 
               {/* About Us Dropdown */}
               <div className="relative group" role="menuitem" aria-haspopup="true">
@@ -118,48 +112,48 @@ export default function Navigation() {
                   role="menu"
                 >
                   <div className="py-1">
-                    <Link
+                    <a
                       href="/about/history"
                       className="block px-4 py-2 text-sm text-gray-700 hover:bg-yellow-500 hover:text-blue-950 transition-colors duration-200 focus:bg-yellow-500 focus:text-blue-950 focus:outline-none"
                       role="menuitem"
                     >
                       History
-                    </Link>
-                    <Link
+                    </a>
+                    <a
                       href="/about/vision-mission"
                       className="block px-4 py-2 text-sm text-gray-700 hover:bg-yellow-500 hover:text-blue-950 transition-colors duration-200 focus:bg-yellow-500 focus:text-blue-950 focus:outline-none"
                       role="menuitem"
                     >
                       Vision & Mission
-                    </Link>
-                    <Link
+                    </a>
+                    <a
                       href="/about/drrmc-council"
                       className="block px-4 py-2 text-sm text-gray-700 hover:bg-yellow-500 hover:text-blue-950 transition-colors duration-200 focus:bg-yellow-500 focus:text-blue-950 focus:outline-none"
                       role="menuitem"
                     >
                       The DRRM Council
-                    </Link>
-                    <Link
+                    </a>
+                    <a
                       href="/about/mdrrmo-personnel"
                       className="block px-4 py-2 text-sm text-gray-700 hover:bg-yellow-500 hover:text-blue-950 transition-colors duration-200 focus:bg-yellow-500 focus:text-blue-950 focus:outline-none"
                       role="menuitem"
                     >
                       MDRRMO Personnel
-                    </Link>
-                    <Link
+                    </a>
+                    <a
                       href="/about/legal-basis"
                       className="block px-4 py-2 text-sm text-gray-700 hover:bg-yellow-500 hover:text-blue-950 transition-colors duration-200 focus:bg-yellow-500 focus:text-blue-950 focus:outline-none"
                       role="menuitem"
                     >
                       Legal Basis
-                    </Link>
-                    <Link
+                    </a>
+                    <a
                       href="/about/our-services"
                       className="block px-4 py-2 text-sm text-gray-700 hover:bg-yellow-500 hover:text-blue-950 transition-colors duration-200 focus:bg-yellow-500 focus:text-blue-950 focus:outline-none"
                       role="menuitem"
                     >
                       Our Services
-                    </Link>
+                    </a>
                   </div>
                 </div>
               </div>
@@ -182,41 +176,41 @@ export default function Navigation() {
                   role="menu"
                 >
                   <div className="py-1">
-                    <Link
+                    <a
                       href="/information/announcements"
                       className="block px-4 py-2 text-sm text-gray-700 hover:bg-yellow-500 hover:text-blue-950 transition-colors duration-200 focus:bg-yellow-500 focus:text-blue-950 focus:outline-none"
                       role="menuitem"
                     >
                       Announcements
-                    </Link>
-                    <Link
+                    </a>
+                    <a
                       href="/information/weather-updates"
                       className="block px-4 py-2 text-sm text-gray-700 hover:bg-yellow-500 hover:text-blue-950 transition-colors duration-200 focus:bg-yellow-500 focus:text-blue-950 focus:outline-none"
                       role="menuitem"
                     >
                       Weather Updates
-                    </Link>
-                    <Link
+                    </a>
+                    <a
                       href="/information/news"
                       className="block px-4 py-2 text-sm text-gray-700 hover:bg-yellow-500 hover:text-blue-950 transition-colors duration-200 focus:bg-yellow-500 focus:text-blue-950 focus:outline-none"
                       role="menuitem"
                     >
                       News & Advisories
-                    </Link>
-                    <Link
+                    </a>
+                    <a
                       href="/information/events"
                       className="block px-4 py-2 text-sm text-gray-700 hover:bg-yellow-500 hover:text-blue-950 transition-colors duration-200 focus:bg-yellow-500 focus:text-blue-950 focus:outline-none"
                       role="menuitem"
                     >
                       Events & Activities
-                    </Link>
-                    <Link
+                    </a>
+                    <a
                       href="/information/faq"
                       className="block px-4 py-2 text-sm text-gray-700 hover:bg-yellow-500 hover:text-blue-950 transition-colors duration-200 focus:bg-yellow-500 focus:text-blue-950 focus:outline-none"
                       role="menuitem"
                     >
                       FAQ
-                    </Link>
+                    </a>
                   </div>
                 </div>
               </div>
@@ -238,27 +232,27 @@ export default function Navigation() {
                   role="menu"
                 >
                   <div className="py-1">
-                    <Link
+                    <a
                       href="/resources/video-gallery"
                       className="block px-4 py-2 text-sm text-gray-700 hover:bg-yellow-500 hover:text-blue-950 transition-colors duration-200 focus:bg-yellow-500 focus:text-blue-950 focus:outline-none"
                       role="menuitem"
                     >
                       Video Gallery
-                    </Link>
-                    <Link
+                    </a>
+                    <a
                       href="/resources/gallery"
                       className="block px-4 py-2 text-sm text-gray-700 hover:bg-yellow-500 hover:text-blue-950 transition-colors duration-200 focus:bg-yellow-500 focus:text-blue-950 focus:outline-none"
                       role="menuitem"
                     >
                       Photo Gallery
-                    </Link>
-                    <Link
+                    </a>
+                    <a
                       href="/resources/public-documents"
                       className="block px-4 py-2 text-sm text-gray-700 hover:bg-yellow-500 hover:text-blue-950 transition-colors duration-200 focus:bg-yellow-500 focus:text-blue-950 focus:outline-none"
                       role="menuitem"
                     >
                       Public Documents
-                    </Link>
+                    </a>
                   </div>
                 </div>
               </div>
@@ -281,77 +275,77 @@ export default function Navigation() {
                   role="menu"
                 >
                   <div className="py-1">
-                    <Link
+                    <a
                       href="/preparedness/emergency-procedures"
                       className="block px-4 py-2 text-sm text-gray-700 hover:bg-yellow-500 hover:text-blue-950 transition-colors duration-200 focus:bg-yellow-500 focus:text-blue-950 focus:outline-none"
                       role="menuitem"
                     >
                       Emergency Procedures
-                    </Link>
-                    <Link
+                    </a>
+                    <a
                       href="/preparedness/evacuation"
                       className="block px-4 py-2 text-sm text-gray-700 hover:bg-yellow-500 hover:text-blue-950 transition-colors duration-200 focus:bg-yellow-500 focus:text-blue-950 focus:outline-none"
                       role="menuitem"
                     >
                       Evacuation Management
-                    </Link>
-                    <Link
+                    </a>
+                    <a
                       href="/preparedness/hazard-maps"
                       className="block px-4 py-2 text-sm text-gray-700 hover:bg-yellow-500 hover:text-blue-950 transition-colors duration-200 focus:bg-yellow-500 focus:text-blue-950 focus:outline-none"
                       role="menuitem"
                     >
                       Hazard Maps
-                    </Link>
-                    <Link
+                    </a>
+                    <a
                       href="/preparedness/early-warning-systems"
                       className="block px-4 py-2 text-sm text-gray-700 hover:bg-yellow-500 hover:text-blue-950 transition-colors duration-200 focus:bg-yellow-500 focus:text-blue-950 focus:outline-none"
                       role="menuitem"
                     >
                       Early Warning Systems
-                    </Link>
-                    <Link
+                    </a>
+                    <a
                       href="/preparedness/community-training"
                       className="block px-4 py-2 text-sm text-gray-700 hover:bg-yellow-500 hover:text-blue-950 transition-colors duration-200 focus:bg-yellow-500 focus:text-blue-950 focus:outline-none"
                       role="menuitem"
                     >
                       Community Training
-                    </Link>
-                    <Link
+                    </a>
+                    <a
                       href="/preparedness/our-plans"
                       className="block px-4 py-2 text-sm text-gray-700 hover:bg-yellow-500 hover:text-blue-950 transition-colors duration-200 focus:bg-yellow-500 focus:text-blue-950 focus:outline-none"
                       role="menuitem"
                     >
                       Our Plans
-                    </Link>
+                    </a>
                     <div className="border-t border-gray-200 my-1"></div>
-                    <Link
+                    <a
                       href="/preparedness/go-bag"
                       className="block px-4 py-2 text-sm text-gray-700 hover:bg-yellow-500 hover:text-blue-950 transition-colors duration-200 focus:bg-yellow-500 focus:text-blue-950 focus:outline-none"
                       role="menuitem"
                     >
                       What's in your GO-BAG?
-                    </Link>
-                    <Link
+                    </a>
+                    <a
                       href="/preparedness/family-plan"
                       className="block px-4 py-2 text-sm text-gray-700 hover:bg-yellow-500 hover:text-blue-950 transition-colors duration-200 focus:bg-yellow-500 focus:text-blue-950 focus:outline-none"
                       role="menuitem"
                     >
                       Family Emergency Plan
-                    </Link>
-                    <Link
+                    </a>
+                    <a
                       href="/preparedness/ice-materials"
                       className="block px-4 py-2 text-sm text-gray-700 hover:bg-yellow-500 hover:text-blue-950 transition-colors duration-200 focus:bg-yellow-500 focus:text-blue-950 focus:outline-none"
                       role="menuitem"
                     >
                       IEC Materials
-                    </Link>
-                    <Link
+                    </a>
+                    <a
                       href="/preparedness/training-and-drill"
                       className="block px-4 py-2 text-sm text-gray-700 hover:bg-yellow-500 hover:text-blue-950 transition-colors duration-200 focus:bg-yellow-500 focus:text-blue-950 focus:outline-none"
                       role="menuitem"
                     >
                       Training and Drill
-                    </Link>
+                    </a>
                   </div>
                 </div>
               </div>
@@ -374,52 +368,52 @@ export default function Navigation() {
                   role="menu"
                 >
                   <div className="py-1">
-                    <Link
+                    <a
                       href="/contact/hotline"
                       className="block px-4 py-2 text-sm text-gray-700 hover:bg-yellow-500 hover:text-blue-950 transition-colors duration-200 focus:bg-yellow-500 focus:text-blue-950 focus:outline-none"
                       role="menuitem"
                     >
                       Emergency Hotlines
-                    </Link>
-                    <Link
+                    </a>
+                    <a
                       href="/contact/location"
                       className="block px-4 py-2 text-sm text-gray-700 hover:bg-yellow-500 hover:text-blue-950 transition-colors duration-200 focus:bg-yellow-500 focus:text-blue-950 focus:outline-none"
                       role="menuitem"
                     >
                       Our Location
-                    </Link>
-                    <Link
+                    </a>
+                    <a
                       href="/contact/message"
                       className="block px-4 py-2 text-sm text-gray-700 hover:bg-yellow-500 hover:text-blue-950 transition-colors duration-200 focus:bg-yellow-500 focus:text-blue-950 focus:outline-none"
                       role="menuitem"
                     >
                       Leave a Message
-                    </Link>
-                    <Link
+                    </a>
+                    <a
                       href="/contact/volunteer"
                       className="block px-4 py-2 text-sm text-gray-700 hover:bg-yellow-500 hover:text-blue-950 transition-colors duration-200 focus:bg-yellow-500 focus:text-blue-950 focus:outline-none"
                       role="menuitem"
                     >
                       Become a Volunteer
-                    </Link>
-                    <Link
+                    </a>
+                    <a
                       href="/contact/report-incident"
                       className="block px-4 py-2 text-sm text-gray-700 hover:bg-yellow-500 hover:text-blue-950 transition-colors duration-200 focus:bg-yellow-500 focus:text-blue-950 focus:outline-none"
                       role="menuitem"
                     >
                       Report an Incident
-                    </Link>
+                    </a>
                   </div>
                 </div>
               </div>
 
-              <Link
+              <a
                 href="/admin"
                 className="text-white hover:text-yellow-500 px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200 focus:ring-2 focus:ring-yellow-500 focus:ring-offset-2 focus:ring-offset-blue-950"
                 role="menuitem"
               >
                 Admin
-              </Link>
+              </a>
             </div>
           </div>
 
@@ -468,13 +462,13 @@ export default function Navigation() {
             </div>
 
             {/* Barangay Portal Button - Desktop */}
-            <Link
+            <a
               href="/barangay-portal"
               className="hidden md:flex items-center space-x-2 bg-yellow-500 hover:bg-yellow-600 text-blue-950 px-4 py-2 rounded-md text-sm font-medium transition-colors duration-200 focus:ring-2 focus:ring-yellow-500 focus:ring-offset-2 focus:ring-offset-blue-950"
             >
               <MapPin className="w-4 h-4" aria-hidden="true" />
               <span>Barangay Portal</span>
-            </Link>
+            </a>
 
             {/* Mobile Icons */}
             <div className="md:hidden flex items-center space-x-2">
@@ -488,13 +482,13 @@ export default function Navigation() {
               </button>
 
               {/* Barangay Portal Icon - Mobile */}
-              <Link
+              <a
                 href="/barangay-portal"
                 className="text-white hover:text-yellow-500 p-2 rounded-md transition-colors duration-200 focus:ring-2 focus:ring-yellow-500 focus:ring-offset-2 focus:ring-offset-blue-950"
                 aria-label="Barangay Portal"
               >
                 <MapPin className="w-5 h-5" aria-hidden="true" />
-              </Link>
+              </a>
 
               {/* Mobile menu button */}
               <button
@@ -571,13 +565,13 @@ export default function Navigation() {
               </button>
             </div>
             <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3">
-          <Link
+          <a
             href="/"
             className="text-white block px-3 py-2 rounded-md text-base font-medium hover:bg-blue-800 transition-colors duration-200 focus:bg-blue-800 focus:outline-none"
             role="menuitem"
           >
             Home
-          </Link>
+          </a>
 
           {/* About Us Mobile */}
           <div className="space-y-1">
@@ -595,51 +589,53 @@ export default function Navigation() {
               />
             </button>
             <div
-              className={`submenu bg-blue-800 rounded-md ml-4 ${openSubmenu === "about" ? "block" : "hidden"}`}
+              className={`submenu bg-blue-800 rounded-md ml-4 transition-all duration-200 overflow-hidden ${openSubmenu === "about" ? "max-h-96 opacity-100" : "max-h-0 opacity-0"}`}
+              style={{ pointerEvents: openSubmenu === "about" ? 'auto' : 'none' }}
               role="menu"
+              aria-hidden={openSubmenu !== "about"}
             >
-              <Link
+              <a
                 href="/about/history"
                 className="text-white block px-3 py-2 text-sm hover:bg-yellow-500 hover:text-blue-950 transition-colors duration-200 focus:bg-yellow-500 focus:text-blue-950 focus:outline-none"
                 role="menuitem"
               >
                 History
-              </Link>
-              <Link
+              </a>
+              <a
                 href="/about/vision-mission"
                 className="text-white block px-3 py-2 text-sm hover:bg-yellow-500 hover:text-blue-950 transition-colors duration-200 focus:bg-yellow-500 focus:text-blue-950 focus:outline-none"
                 role="menuitem"
               >
                 Vision & Mission
-              </Link>
-              <Link
+              </a>
+              <a
                 href="/about/drrmc-council"
                 className="text-white block px-3 py-2 text-sm hover:bg-yellow-500 hover:text-blue-950 transition-colors duration-200 focus:bg-yellow-500 focus:text-blue-950 focus:outline-none"
                 role="menuitem"
               >
                 The DRRM Council
-              </Link>
-              <Link
+              </a>
+              <a
                 href="/about/mdrrmo-personnel"
                 className="text-white block px-3 py-2 text-sm hover:bg-yellow-500 hover:text-blue-950 transition-colors duration-200 focus:bg-yellow-500 focus:text-blue-950 focus:outline-none"
                 role="menuitem"
               >
                 MDRRMO Personnel
-              </Link>
-              <Link
+              </a>
+              <a
                 href="/about/legal-basis"
                 className="text-white block px-3 py-2 text-sm hover:bg-yellow-500 hover:text-blue-950 transition-colors duration-200 focus:bg-yellow-500 focus:text-blue-950 focus:outline-none"
                 role="menuitem"
               >
                 Legal Basis
-              </Link>
-              <Link
+              </a>
+              <a
                 href="/about/our-services"
                 className="text-white block px-3 py-2 text-sm hover:bg-yellow-500 hover:text-blue-950 transition-colors duration-200 focus:bg-yellow-500 focus:text-blue-950 focus:outline-none"
                 role="menuitem"
               >
                 Our Services
-              </Link>
+              </a>
             </div>
           </div>
 
@@ -659,44 +655,46 @@ export default function Navigation() {
               />
             </button>
             <div
-              className={`submenu bg-blue-800 rounded-md ml-4 ${openSubmenu === "information" ? "block" : "hidden"}`}
+              className={`submenu bg-blue-800 rounded-md ml-4 transition-all duration-200 overflow-hidden ${openSubmenu === "information" ? "max-h-96 opacity-100" : "max-h-0 opacity-0"}`}
+              style={{ pointerEvents: openSubmenu === "information" ? 'auto' : 'none' }}
               role="menu"
+              aria-hidden={openSubmenu !== "information"}
             >
-              <Link
+              <a
                 href="/information/announcements"
                 className="text-white block px-3 py-2 text-sm hover:bg-yellow-500 hover:text-blue-950 transition-colors duration-200 focus:bg-yellow-500 focus:text-blue-950 focus:outline-none"
                 role="menuitem"
               >
                 Announcements
-              </Link>
-              <Link
+              </a>
+              <a
                 href="/information/weather-updates"
                 className="text-white block px-3 py-2 text-sm hover:bg-yellow-500 hover:text-blue-950 transition-colors duration-200 focus:bg-yellow-500 focus:text-blue-950 focus:outline-none"
                 role="menuitem"
               >
                 Weather Updates
-              </Link>
-              <Link
+              </a>
+              <a
                 href="/information/news"
                 className="text-white block px-3 py-2 text-sm hover:bg-yellow-500 hover:text-blue-950 transition-colors duration-200 focus:bg-yellow-500 focus:text-blue-950 focus:outline-none"
                 role="menuitem"
               >
                 News & Advisories
-              </Link>
-              <Link
+              </a>
+              <a
                 href="/information/events"
                 className="text-white block px-3 py-2 text-sm hover:bg-yellow-500 hover:text-blue-950 transition-colors duration-200 focus:bg-yellow-500 focus:text-blue-950 focus:outline-none"
                 role="menuitem"
               >
                 Events & Activities
-              </Link>
-              <Link
+              </a>
+              <a
                 href="/information/faq"
                 className="text-white block px-3 py-2 text-sm hover:bg-yellow-500 hover:text-blue-950 transition-colors duration-200 focus:bg-yellow-500 focus:text-blue-950 focus:outline-none"
                 role="menuitem"
               >
                 FAQ
-              </Link>
+              </a>
             </div>
           </div>
 
@@ -715,30 +713,32 @@ export default function Navigation() {
               />
             </button>
             <div
-              className={`submenu bg-blue-800 rounded-md ml-4 ${openSubmenu === "resources" ? "block" : "hidden"}`}
+              className={`submenu bg-blue-800 rounded-md ml-4 transition-all duration-200 overflow-hidden ${openSubmenu === "resources" ? "max-h-96 opacity-100" : "max-h-0 opacity-0"}`}
+              style={{ pointerEvents: openSubmenu === "resources" ? 'auto' : 'none' }}
               role="menu"
+              aria-hidden={openSubmenu !== "resources"}
             >
-              <Link
+              <a
                 href="/resources/video-gallery"
                 className="text-white block px-3 py-2 text-sm hover:bg-yellow-500 hover:text-blue-950 transition-colors duration-200 focus:bg-yellow-500 focus:text-blue-950 focus:outline-none"
                 role="menuitem"
               >
                 Video Gallery
-              </Link>
-              <Link
+              </a>
+              <a
                 href="/resources/gallery"
                 className="text-white block px-3 py-2 text-sm hover:bg-yellow-500 hover:text-blue-950 transition-colors duration-200 focus:bg-yellow-500 focus:text-blue-950 focus:outline-none"
                 role="menuitem"
               >
                 Photo Gallery
-              </Link>
-              <Link
+              </a>
+              <a
                 href="/resources/public-documents"
                 className="text-white block px-3 py-2 text-sm hover:bg-yellow-500 hover:text-blue-950 transition-colors duration-200 focus:bg-yellow-500 focus:text-blue-950 focus:outline-none"
                 role="menuitem"
               >
                 Public Documents
-              </Link>
+              </a>
             </div>
           </div>
 
@@ -758,80 +758,82 @@ export default function Navigation() {
               />
             </button>
             <div
-              className={`submenu bg-blue-800 rounded-md ml-4 ${openSubmenu === "preparedness" ? "block" : "hidden"}`}
+              className={`submenu bg-blue-800 rounded-md ml-4 transition-all duration-200 overflow-hidden ${openSubmenu === "preparedness" ? "max-h-96 opacity-100" : "max-h-0 opacity-0"}`}
+              style={{ pointerEvents: openSubmenu === "preparedness" ? 'auto' : 'none' }}
               role="menu"
+              aria-hidden={openSubmenu !== "preparedness"}
             >
-              <Link
+              <a
                 href="/preparedness/emergency-procedures"
                 className="text-white block px-3 py-2 text-sm hover:bg-yellow-500 hover:text-blue-950 transition-colors duration-200 focus:bg-yellow-500 focus:text-blue-950 focus:outline-none"
                 role="menuitem"
               >
                 Emergency Procedures
-              </Link>
-              <Link
+              </a>
+              <a
                 href="/preparedness/evacuation"
                 className="text-white block px-3 py-2 text-sm hover:bg-yellow-500 hover:text-blue-950 transition-colors duration-200 focus:bg-yellow-500 focus:text-blue-950 focus:outline-none"
                 role="menuitem"
               >
                 Evacuation Management
-              </Link>
-              <Link
+              </a>
+              <a
                 href="/preparedness/hazard-maps"
                 className="text-white block px-3 py-2 text-sm hover:bg-yellow-500 hover:text-blue-950 transition-colors duration-200 focus:bg-yellow-500 focus:text-blue-950 focus:outline-none"
                 role="menuitem"
               >
                 Hazard Maps
-              </Link>
-              <Link
+              </a>
+              <a
                 href="/preparedness/early-warning-systems"
                 className="text-white block px-3 py-2 text-sm hover:bg-yellow-500 hover:text-blue-950 transition-colors duration-200 focus:bg-yellow-500 focus:text-blue-950 focus:outline-none"
                 role="menuitem"
               >
                 Early Warning Systems
-              </Link>
-              <Link
+              </a>
+              <a
                 href="/preparedness/community-training"
                 className="text-white block px-3 py-2 text-sm hover:bg-yellow-500 hover:text-blue-950 transition-colors duration-200 focus:bg-yellow-500 focus:text-blue-950 focus:outline-none"
                 role="menuitem"
               >
                 Community Training
-              </Link>
-              <Link
+              </a>
+              <a
                 href="/preparedness/our-plans"
                 className="text-white block px-3 py-2 text-sm hover:bg-yellow-500 hover:text-blue-950 transition-colors duration-200 focus:bg-yellow-500 focus:text-blue-950 focus:outline-none"
                 role="menuitem"
               >
                 Our Plans
-              </Link>
+              </a>
               <div className="border-t border-blue-700 my-1"></div>
-              <Link
+              <a
                 href="/preparedness/go-bag"
                 className="text-white block px-3 py-2 text-sm hover:bg-yellow-500 hover:text-blue-950 transition-colors duration-200 focus:bg-yellow-500 focus:text-blue-950 focus:outline-none"
                 role="menuitem"
               >
                 What's in your GO-BAG?
-              </Link>
-              <Link
+              </a>
+              <a
                 href="/preparedness/family-plan"
                 className="text-white block px-3 py-2 text-sm hover:bg-yellow-500 hover:text-blue-950 transition-colors duration-200 focus:bg-yellow-500 focus:text-blue-950 focus:outline-none"
                 role="menuitem"
               >
                 Family Emergency Plan
-              </Link>
-              <Link
+              </a>
+              <a
                 href="/preparedness/ice-materials"
                 className="text-white block px-3 py-2 text-sm hover:bg-yellow-500 hover:text-blue-950 transition-colors duration-200 focus:bg-yellow-500 focus:text-blue-950 focus:outline-none"
                 role="menuitem"
               >
                 IEC Materials
-              </Link>
-              <Link
+              </a>
+              <a
                 href="/preparedness/training-and-drill"
                 className="text-white block px-3 py-2 text-sm hover:bg-yellow-500 hover:text-blue-950 transition-colors duration-200 focus:bg-yellow-500 focus:text-blue-950 focus:outline-none"
                 role="menuitem"
               >
                 Training and Drill
-              </Link>
+              </a>
             </div>
           </div>
 
@@ -851,62 +853,64 @@ export default function Navigation() {
               />
             </button>
             <div
-              className={`submenu bg-blue-800 rounded-md ml-4 ${openSubmenu === "contact" ? "block" : "hidden"}`}
+              className={`submenu bg-blue-800 rounded-md ml-4 transition-all duration-200 overflow-hidden ${openSubmenu === "contact" ? "max-h-96 opacity-100" : "max-h-0 opacity-0"}`}
+              style={{ pointerEvents: openSubmenu === "contact" ? 'auto' : 'none' }}
               role="menu"
+              aria-hidden={openSubmenu !== "contact"}
             >
-              <Link
+              <a
                 href="/contact/hotline"
                 className="text-white block px-3 py-2 text-sm hover:bg-yellow-500 hover:text-blue-950 transition-colors duration-200 focus:bg-yellow-500 focus:text-blue-950 focus:outline-none"
                 role="menuitem"
               >
                 Emergency Hotlines
-              </Link>
-              <Link
+              </a>
+              <a
                 href="/contact/location"
                 className="text-white block px-3 py-2 text-sm hover:bg-yellow-500 hover:text-blue-950 transition-colors duration-200 focus:bg-yellow-500 focus:text-blue-950 focus:outline-none"
                 role="menuitem"
               >
                 Our Location
-              </Link>
-              <Link
+              </a>
+              <a
                 href="/contact/message"
                 className="text-white block px-3 py-2 text-sm hover:bg-yellow-500 hover:text-blue-950 transition-colors duration-200 focus:bg-yellow-500 focus:text-blue-950 focus:outline-none"
                 role="menuitem"
               >
                 Leave a Message
-              </Link>
-              <Link
+              </a>
+              <a
                 href="/contact/volunteer"
                 className="text-white block px-3 py-2 text-sm hover:bg-yellow-500 hover:text-blue-950 transition-colors duration-200 focus:bg-yellow-500 focus:text-blue-950 focus:outline-none"
                 role="menuitem"
               >
                 Become a Volunteer
-              </Link>
-              <Link
+              </a>
+              <a
                 href="/contact/report-incident"
                 className="text-white block px-3 py-2 text-sm hover:bg-yellow-500 hover:text-blue-950 transition-colors duration-200 focus:bg-yellow-500 focus:text-blue-950 focus:outline-none"
                 role="menuitem"
               >
                 Report an Incident
-              </Link>
+              </a>
             </div>
           </div>
 
-          <Link
+          <a
             href="/admin"
             className="text-white block px-3 py-2 rounded-md text-base font-medium hover:bg-blue-800 transition-colors duration-200 focus:bg-blue-800 focus:outline-none"
             role="menuitem"
           >
             Admin
-          </Link>
+          </a>
 
-          <Link
+          <a
             href="/barangay-portal"
             className="text-white block px-3 py-2 rounded-md text-base font-medium hover:bg-blue-800 transition-colors duration-200 focus:bg-blue-800 focus:outline-none"
             role="menuitem"
           >
             Barangay Portal
-          </Link>
+          </a>
             </div>
           </div>
         </>

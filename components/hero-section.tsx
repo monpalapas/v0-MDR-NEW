@@ -148,8 +148,8 @@ export default function HeroSection() {
       <div className="absolute inset-0 bg-gradient-to-b from-blue-900/30 to-blue-800/30"></div>
 
       {currentTime && (
-        <div className="absolute top-6 right-6 z-20">
-          <div className="backdrop-blur-lg bg-white/10 border border-white/20 rounded-xl p-4 shadow-xl glass-effect">
+        <div className="absolute top-2 right-6 z-10">
+          <div className="backdrop-blur-lg bg-white/10 border border-white/20 rounded-xl p-3 shadow-xl glass-effect">
             <div className="text-white text-center">
               <div className="text-2xl font-bold">{formatTime(currentTime)}</div>
               <div className="text-sm opacity-80">{formatDate(currentTime)}</div>
@@ -160,7 +160,7 @@ export default function HeroSection() {
       )}
 
       <div className="container mx-auto px-4 z-10 text-center">
-        <h1 className="text-white mb-10">
+        <h1 className="text-white mb-5">
           <span className="text-yellow-500">Resilient Pio Duran:</span>
           <br /> Prepared for Tomorrow
         </h1>

@@ -63,6 +63,7 @@ const categories = ["Training", "Events", "Tutorials", "Interviews", "Documentar
 const statusOptions = ["draft", "published", "archived"]
 
 export default function VideoManagement() {
+  // All useState and supabase client must come first
   const [videos, setVideos] = useState<VideoItem[]>([])
   const [loading, setLoading] = useState(true)
   const [searchTerm, setSearchTerm] = useState("")
@@ -75,12 +76,6 @@ export default function VideoManagement() {
   const [currentPage, setCurrentPage] = useState(1)
   const [itemsPerPage] = useState(10)
   const [thumbnailPreview, setThumbnailPreview] = useState<string | null>(null)
-
-  const supabase = createBrowserClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-  )
-
   const [formData, setFormData] = useState({
     title: "",
     description: "",
@@ -91,156 +86,26 @@ export default function VideoManagement() {
     duration: "",
     status: "draft",
   })
+  const supabase = createBrowserClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+  )
 
-  // Fix: Destructure toast from useToast
-  const { toast } = useToast();
+  // Filtering and pagination helpers
+  const filteredVideos = videos.filter((video) => {
+    const matchesSearch =
+      video.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      video.description.toLowerCase().includes(searchTerm.toLowerCase())
+    const matchesCategory = categoryFilter === "all" || video.category === categoryFilter
+    const matchesStatus = statusFilter === "all" || video.status === statusFilter
+    return matchesSearch && matchesCategory && matchesStatus
+  })
 
-  useEffect(() => {
-    fetchVideos()
-  }, [])
+  const totalPages = Math.ceil(filteredVideos.length / itemsPerPage)
+  const startIndex = (currentPage - 1) * itemsPerPage
+  const paginatedVideos = filteredVideos.slice(startIndex, startIndex + itemsPerPage)
 
-  const fetchVideos = async () => {
-    try {
-      setLoading(true)
-      const { data, error } = await supabase
-        .from("videos")
-        .select("*")
-        .order("created_at", { ascending: false })
-
-      if (error) throw error
-      setVideos(data || [])
-    } catch (error) {
-      console.error("Error fetching videos:", error)
-      toast({
-        title: "Error",
-        description: "Failed to fetch videos",
-        variant: "destructive",
-      })
-    } finally {
-      setLoading(false)
-    }
-  }
-
-  const handleThumbnailUpload = async (file: File) => {
-    try {
-      const fileExt = file.name.split('.').pop()
-      const fileName = `${Math.random()}.${fileExt}`
-      const filePath = `thumbnails/${fileName}`
-
-      const { error: uploadError } = await supabase.storage
-        .from('public')
-        .upload(filePath, file)
-
-      if (uploadError) throw uploadError
-
-      const { data: { publicUrl } } = supabase.storage
-        .from('public')
-        .getPublicUrl(filePath)
-
-      return publicUrl
-    } catch (error) {
-      console.error("Error uploading thumbnail:", error)
-      throw error
-    }
-  }
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
-
-    if (!formData.title || !formData.video_url) {
-      toast({
-        title: "Validation Error",
-        description: "Please fill in all required fields",
-        variant: "destructive",
-      })
-      return
-    }
-
-    try {
-      const videoData = {
-        ...formData,
-        views: selectedVideo ? selectedVideo.views : 0,
-        uploaded_by: "00000000-0000-0000-0000-000000000000", // Replace with actual user ID
-      }
-
-      if (selectedVideo) {
-        // Update existing video
-        const { error } = await supabase.from("videos").update(videoData).eq("id", selectedVideo.id)
-
-        if (error) throw error
-
-        toast({
-          title: "Success",
-          description: "Video updated successfully",
-        })
-        setIsEditDialogOpen(false)
-      } else {
-        // Create new video
-        const { error } = await supabase.from("videos").insert([videoData])
-
-        if (error) throw error
-
-        toast({
-          title: "Success",
-          description: "Video uploaded successfully",
-        })
-        setIsCreateDialogOpen(false)
-      }
-
-      resetForm()
-      fetchVideos()
-    } catch (error) {
-      console.error("Error saving video:", error)
-      toast({
-        title: "Error",
-        description: "Failed to save video",
-        variant: "destructive",
-      })
-    }
-  }
-
-  const handleEdit = (video: VideoItem) => {
-    setSelectedVideo(video)
-    setFormData({
-      title: video.title,
-      description: video.description,
-      video_url: video.video_url,
-      thumbnail_url: video.thumbnail_url,
-      category: video.category,
-      tags: video.tags,
-      duration: video.duration,
-      status: video.status,
-    })
-    setThumbnailPreview(video.thumbnail_url)
-    setIsEditDialogOpen(true)
-  }
-
-  const handleView = (video: VideoItem) => {
-    setSelectedVideo(video)
-    setIsViewDialogOpen(true)
-  }
-
-  const handleDelete = async (id: number) => {
-    try {
-      const { error } = await supabase.from("videos").delete().eq("id", id)
-
-      if (error) throw error
-
-      toast({
-        title: "Success",
-        description: "Video deleted successfully",
-      })
-      fetchVideos()
-    } catch (error) {
-      console.error("Error deleting video:", error)
-      toast({
-        title: "Error",
-        description: "Failed to delete video",
-        variant: "destructive",
-      })
-    }
-  }
-
+  // Restore resetForm
   const resetForm = () => {
     setFormData({
       title: "",
@@ -256,10 +121,10 @@ export default function VideoManagement() {
     setSelectedVideo(null)
   }
 
+  // Restore handleThumbnailChange
   const handleThumbnailChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
     if (!file) return
-
     try {
       const publicUrl = await handleThumbnailUpload(file)
       setFormData({ ...formData, thumbnail_url: publicUrl })
@@ -273,21 +138,26 @@ export default function VideoManagement() {
     }
   }
 
-  const filteredVideos = videos.filter((video) => {
-    const matchesSearch =
-      video.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      video.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      video.tags.toLowerCase().includes(searchTerm.toLowerCase())
-    const matchesCategory = categoryFilter === "all" || video.category === categoryFilter
-    const matchesStatus = statusFilter === "all" || video.status === statusFilter
-
-    return matchesSearch && matchesCategory && matchesStatus
-  })
-
-  const totalPages = Math.ceil(filteredVideos.length / itemsPerPage)
-  const startIndex = (currentPage - 1) * itemsPerPage
-  const paginatedVideos = filteredVideos.slice(startIndex, startIndex + itemsPerPage)
-
+  // Restore handleDelete
+  const handleDelete = async (id: number) => {
+    try {
+      const { error } = await supabase.from("videos").delete().eq("id", id)
+      if (error) throw error
+      toast({
+        title: "Success",
+        description: "Video deleted successfully",
+      })
+      await fetchVideos()
+    } catch (error) {
+      console.error("Error deleting video:", error)
+      toast({
+        title: "Error",
+        description: "Failed to delete video",
+        variant: "destructive",
+      })
+    }
+  }
+  // Helper: Format date
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString("en-US", {
       year: "numeric",
@@ -296,11 +166,13 @@ export default function VideoManagement() {
     })
   }
 
+  // Helper: Format duration
   const formatDuration = (duration: string) => {
     if (!duration) return "00:00"
     return duration
   }
 
+  // Helper: Status badge
   const getStatusBadge = (status: string) => {
     const statusColors: Record<string, string> = {
       draft: "bg-gray-100 text-gray-800",
@@ -314,6 +186,15 @@ export default function VideoManagement() {
     )
   }
 
+  // Helper: View dialog
+  const handleView = (video: VideoItem) => {
+    setSelectedVideo(video)
+    setIsViewDialogOpen(true)
+  }
+
+  // ...existing code...
+
+  // VideoForm component
   const VideoForm = () => (
     <form onSubmit={handleSubmit} className="space-y-4">
       <div className="space-y-2">
@@ -468,6 +349,139 @@ export default function VideoManagement() {
       </DialogFooter>
     </form>
   )
+
+
+  // Fix: Destructure toast from useToast
+  const { toast } = useToast();
+
+  useEffect(() => {
+    fetchVideos()
+  }, [])
+
+  const fetchVideos = async () => {
+    try {
+      setLoading(true)
+      const { data, error } = await supabase
+        .from("videos")
+        .select("*")
+        .order("created_at", { ascending: false })
+
+      if (error) throw error
+      setVideos(data || [])
+    } catch (error) {
+      console.error("Error fetching videos:", error)
+      toast({
+        title: "Error",
+        description: "Failed to fetch videos",
+        variant: "destructive",
+      })
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  const handleThumbnailUpload = async (file: File) => {
+    try {
+      const fileExt = file.name.split('.').pop()
+      const fileName = `${Math.random()}.${fileExt}`
+      const filePath = `thumbnails/${fileName}`
+
+      const { error: uploadError } = await supabase.storage
+        .from('public')
+        .upload(filePath, file)
+
+      if (uploadError) throw uploadError
+
+      const { data: { publicUrl } } = supabase.storage
+        .from('public')
+        .getPublicUrl(filePath)
+
+      return publicUrl
+    } catch (error) {
+      console.error("Error uploading thumbnail:", error)
+      throw error
+    }
+  }
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault()
+
+    if (!formData.title || !formData.video_url) {
+      toast({
+        title: "Validation Error",
+        description: "Please fill in all required fields",
+        variant: "destructive",
+      })
+      return
+    }
+
+    try {
+      const videoData = {
+        ...formData,
+        views: selectedVideo ? selectedVideo.views : 0,
+        uploaded_by: null, // Set to null to avoid placeholder UUID issues
+      }
+      console.log("Submitting videoData:", JSON.stringify(videoData, null, 2))
+
+      if (selectedVideo) {
+        // Update existing video
+        const updateRes = await supabase.from("videos").update(videoData).eq("id", selectedVideo.id)
+        console.log("Supabase update response:", JSON.stringify(updateRes, null, 2))
+        if (updateRes.error) {
+          if (Object.keys(updateRes.error).length === 0) {
+            console.error("Supabase update error: Empty error object. Check your table schema and required fields.")
+          }
+          throw updateRes.error
+        }
+        toast({
+          title: "Success",
+          description: "Video updated successfully",
+        })
+        setIsEditDialogOpen(false)
+      } else {
+        // Create new video
+        const insertRes = await supabase.from("videos").insert([videoData])
+        console.log("Supabase insert response:", JSON.stringify(insertRes, null, 2))
+        if (insertRes.error) {
+          if (Object.keys(insertRes.error).length === 0) {
+            console.error("Supabase insert error: Empty error object. Check your table schema and required fields.")
+          }
+          throw insertRes.error
+        }
+        toast({
+          title: "Success",
+          description: "Video uploaded successfully",
+        })
+        setIsCreateDialogOpen(false)
+      }
+
+      resetForm()
+      fetchVideos()
+    } catch (error) {
+      console.error("Error saving video:", error)
+      toast({
+        title: "Error",
+        description: Object.keys(error || {}).length === 0 ? "Failed to save video. Check required fields and table schema." : "Failed to save video",
+        variant: "destructive",
+      })
+    }
+  }
+
+  const handleEdit = (video: VideoItem) => {
+    setSelectedVideo(video)
+    setFormData({
+      title: video.title,
+      description: video.description,
+      video_url: video.video_url,
+      thumbnail_url: video.thumbnail_url,
+      category: video.category,
+      tags: video.tags,
+      duration: video.duration,
+      status: video.status,
+    })
+    setThumbnailPreview(video.thumbnail_url)
+    setIsEditDialogOpen(true)
+  }
 
   if (loading) {
     return (

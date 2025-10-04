@@ -75,67 +75,19 @@ export default function PersonnelManagement() {
     image: "https://res.cloudinary.com/dedcmctqk/image/upload/v1758628068/pioduran_seal_official_fhmwac.webp"
   })
 
-  // Initialize with sample data
+  // Fetch personnel from Supabase
   useEffect(() => {
-    const samplePersonnel: Personnel[] = [
-      {
-        id: "1",
-        name: "HON. EVANGELINE C. ARANDIA",
-        position: "Municipal Mayor",
-        department: "Local Government",
-        email: "mayor.arandia@pioduran.gov.ph",
-        phone: "(052) 234-5678",
-        status: "active",
-        level: "leadership",
-        image: "https://res.cloudinary.com/dedcmctqk/image/upload/v1758628068/pioduran_seal_official_fhmwac.webp"
-      },
-      {
-        id: "2",
-        name: "NOEL F. ORDONA",
-        position: "MDRRMO Head",
-        department: "Disaster Management",
-        email: "mdrrmo.head@pioduran.gov.ph",
-        phone: "(052) 234-5679",
-        status: "active",
-        level: "management",
-        image: "https://res.cloudinary.com/dedcmctqk/image/upload/v1758628068/pioduran_seal_official_fhmwac.webp"
-      },
-      {
-        id: "3",
-        name: "JUAN DELA CRUZ",
-        position: "Administration and Training",
-        department: "MDRRMO",
-        email: "admin.training@pioduran.gov.ph",
-        phone: "(052) 234-5680",
-        status: "active",
-        level: "core",
-        image: "https://res.cloudinary.com/dedcmctqk/image/upload/v1758628068/pioduran_seal_official_fhmwac.webp"
-      },
-      {
-        id: "4",
-        name: "MARIA SANTOS",
-        position: "Research and Planning",
-        department: "MDRRMO",
-        email: "research.planning@pioduran.gov.ph",
-        phone: "(052) 234-5681",
-        status: "active",
-        level: "core",
-        image: "https://res.cloudinary.com/dedcmctqk/image/upload/v1758628068/pioduran_seal_official_fhmwac.webp"
-      },
-      {
-        id: "5",
-        name: "CARLOS REYES",
-        position: "RESCUE OPERATOR",
-        department: "Emergency Response",
-        email: "rescue@pioduran.gov.ph",
-        phone: "(052) 234-5682",
-        status: "active",
-        level: "emergency",
-        image: "https://res.cloudinary.com/dedcmctqk/image/upload/v1758628068/pioduran_seal_official_fhmwac.webp"
+    const fetchPersonnel = async () => {
+      const supabase = (await import("@/lib/supabase/client")).createClient();
+      const { data, error } = await supabase.from('personnel').select('*').order('id', { ascending: true })
+      if (error) {
+        toast({ title: "Error", description: error.message, variant: "destructive" })
+      } else {
+        setPersonnel(data || [])
       }
-    ]
-    setPersonnel(samplePersonnel)
-    setLoading(false)
+      setLoading(false)
+    }
+    fetchPersonnel()
   }, [])
 
   const filteredPersonnel = personnel.filter(
@@ -186,56 +138,59 @@ export default function PersonnelManagement() {
     setShowDeleteDialog(true)
   }
 
-  const confirmDelete = () => {
+  const confirmDelete = async () => {
     if (deleteTarget) {
-      setPersonnel(personnel.filter(p => p.id !== deleteTarget.id))
-      toast({
-        title: "Success",
-        description: "Personnel deleted successfully",
-      })
+      const supabase = (await import("@/lib/supabase/client")).createClient();
+      const { error } = await supabase.from('personnel').delete().eq('id', deleteTarget.id)
+      if (error) {
+        toast({ title: "Error", description: error.message, variant: "destructive" })
+      } else {
+        toast({ title: "Success", description: "Personnel deleted successfully" })
+        // Refresh list
+        const { data } = await supabase.from('personnel').select('*').order('id', { ascending: true })
+        setPersonnel(data || [])
+      }
       setShowDeleteDialog(false)
       setDeleteTarget(null)
     }
   }
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    
-    if (!formData.name || !formData.position || !formData.email) {
+    if (!formData.name || !formData.position || !formData.email || !formData.department || !formData.phone) {
       toast({
         title: "Validation Error",
-        description: "Name, Position, and Email are required fields",
+        description: "All fields except image are required",
         variant: "destructive",
       })
       return
     }
-
+    const supabase = (await import("@/lib/supabase/client")).createClient();
     if (selectedPersonnel) {
       // Update existing personnel
-      setPersonnel(personnel.map(p => 
-        p.id === selectedPersonnel.id 
-          ? { ...p, ...formData }
-          : p
-      ))
-      toast({
-        title: "Success",
-        description: "Personnel updated successfully",
-      })
-      setShowEditForm(false)
+      const { error } = await supabase.from('personnel').update(formData).eq('id', selectedPersonnel.id)
+      if (error) {
+        toast({ title: "Error", description: error.message, variant: "destructive" })
+      } else {
+        toast({ title: "Success", description: "Personnel updated successfully" })
+        setShowEditForm(false)
+        // Refresh list
+        const { data } = await supabase.from('personnel').select('*').order('id', { ascending: true })
+        setPersonnel(data || [])
+      }
     } else {
       // Add new personnel
-      const newPersonnel: Personnel = {
-        id: Date.now().toString(),
-        ...formData,
+      const { error } = await supabase.from('personnel').insert([formData])
+      if (error) {
+        toast({ title: "Error", description: error.message, variant: "destructive" })
+      } else {
+        toast({ title: "Success", description: "New personnel added successfully" })
+        setShowAddForm(false)
+        // Refresh list
+        const { data } = await supabase.from('personnel').select('*').order('id', { ascending: true })
+        setPersonnel(data || [])
       }
-      setPersonnel([...personnel, newPersonnel])
-      toast({
-        title: "Success",
-        description: "New personnel added successfully",
-      })
-      setShowAddForm(false)
     }
-    
     setFormData({
       name: "",
       position: "",

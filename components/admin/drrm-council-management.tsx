@@ -1,6 +1,7 @@
 "use client"
 
 import { useState, useEffect } from "react"
+import { createClient } from "@/lib/supabase/client"
 import { 
   Plus, 
   Edit, 
@@ -44,11 +45,15 @@ interface CouncilMember {
   id: number
   name: string
   position: string
-  department: string
-  role?: string
-  subDepartment?: string
-  image: string
-  level: 'leadership' | 'viceChair' | 'cluster'
+  department?: string
+  email?: string
+  phone?: string
+  avatar_url?: string
+  bio?: string
+  status?: string
+  order_index?: number
+  created_at?: string
+  updated_at?: string
 }
 
 export default function DRRMCCouncilManagement() {
@@ -59,70 +64,29 @@ export default function DRRMCCouncilManagement() {
     name: "",
     position: "",
     department: "",
-    role: "",
-    subDepartment: "",
-    image: "https://res.cloudinary.com/dedcmctqk/image/upload/v1758628068/pioduran_seal_official_fhmwac.webp",
-    level: "leadership" as 'leadership' | 'viceChair' | 'cluster'
+    email: "",
+    phone: "",
+    avatar_url: "https://res.cloudinary.com/dedcmctqk/image/upload/v1758628068/pioduran_seal_official_fhmwac.webp",
+    bio: "",
+    status: "active",
+    order_index: 0
   })
   const [searchTerm, setSearchTerm] = useState("")
   const [filterLevel, setFilterLevel] = useState("all")
   const { toast } = useToast()
 
-  // Initialize with sample data
+  // Fetch council members from Supabase
   useEffect(() => {
-    const sampleMembers: CouncilMember[] = [
-      {
-        id: 1,
-        name: "Hon. EVANGELINE C. ARANDIA",
-        position: "CHAIRPERSON",
-        department: "(Municipal Mayor)",
-        image: "https://res.cloudinary.com/dedcmctqk/image/upload/v1758628068/pioduran_seal_official_fhmwac.webp",
-        level: "leadership"
-      },
-      {
-        id: 2,
-        name: "Hon. HENRY P. CALLOPE",
-        position: "CO-CHAIRPERSON",
-        department: "(Municipal Vice Mayor)",
-        image: "https://res.cloudinary.com/dedcmctqk/image/upload/v1758628068/pioduran_seal_official_fhmwac.webp",
-        level: "leadership"
-      },
-      {
-        id: 3,
-        name: "Engr. Roberto Garcia",
-        position: "VICE CHAIRPERSON",
-        department: "DISASTER PREPAREDNESS",
-        role: "(MLGOO)",
-        image: "https://res.cloudinary.com/dedcmctqk/image/upload/v1758628068/pioduran_seal_official_fhmwac.webp",
-        level: "viceChair"
-      },
-      {
-        id: 4,
-        name: "Arch. Ana Reyes",
-        position: "VICE CHAIRPERSON",
-        department: "DISASTER PREVENTION AND MITIGATION",
-        role: "(MPDO)",
-        image: "https://res.cloudinary.com/dedcmctqk/image/upload/v1758628068/pioduran_seal_official_fhmwac.webp",
-        level: "viceChair"
-      },
-      {
-        id: 5,
-        name: "Mr. Jose Navarro",
-        position: "EMERGENCY COMMUNICATION",
-        department: "(MDRRMO - Lead)",
-        image: "https://res.cloudinary.com/dedcmctqk/image/upload/v1758628068/pioduran_seal_official_fhmwac.webp",
-        level: "cluster"
-      },
-      {
-        id: 6,
-        name: "Mr. Ricardo Cruz",
-        position: "TRANSPORTATION",
-        department: "(MEO - Lead)",
-        image: "https://res.cloudinary.com/dedcmctqk/image/upload/v1758628068/pioduran_seal_official_fhmwac.webp",
-        level: "cluster"
+    const fetchMembers = async () => {
+      const supabase = createClient()
+      const { data, error } = await supabase.from('drrm_council').select('*').order('order_index', { ascending: true })
+      if (error) {
+        toast({ title: "Error", description: error.message, variant: "destructive" })
+      } else {
+        setMembers(data || [])
       }
-    ]
-    setMembers(sampleMembers)
+    }
+    fetchMembers()
   }, [])
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
@@ -130,9 +94,8 @@ export default function DRRMCCouncilManagement() {
     setFormData(prev => ({ ...prev, [name]: value }))
   }
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    
     if (!formData.name || !formData.position) {
       toast({
         title: "Validation Error",
@@ -141,31 +104,30 @@ export default function DRRMCCouncilManagement() {
       })
       return
     }
-
+    const supabase = createClient()
     if (editingMember) {
-      // Update existing member
-      setMembers(prev => prev.map(member => 
-        member.id === editingMember.id 
-          ? { ...member, ...formData, id: editingMember.id }
-          : member
-      ))
-      toast({
-        title: "Success",
-        description: "Council member updated successfully",
-      })
-    } else {
-      // Add new member
-      const newMember: CouncilMember = {
-        ...formData,
-        id: Date.now()
+      // Update existing member in Supabase
+      const { error } = await supabase.from('drrm_council').update(formData).eq('id', editingMember.id)
+      if (error) {
+        toast({ title: "Error", description: error.message, variant: "destructive" })
+      } else {
+        toast({ title: "Success", description: "Council member updated successfully" })
+        // Refresh members
+        const { data } = await supabase.from('drrm_council').select('*').order('order_index', { ascending: true })
+        setMembers(data || [])
       }
-      setMembers(prev => [...prev, newMember])
-      toast({
-        title: "Success",
-        description: "New council member added successfully",
-      })
+    } else {
+      // Add new member to Supabase
+      const { error } = await supabase.from('drrm_council').insert([formData])
+      if (error) {
+        toast({ title: "Error", description: error.message, variant: "destructive" })
+      } else {
+        toast({ title: "Success", description: "New council member added successfully" })
+        // Refresh members
+        const { data } = await supabase.from('drrm_council').select('*').order('order_index', { ascending: true })
+        setMembers(data || [])
+      }
     }
-
     resetForm()
     setIsDialogOpen(false)
   }
@@ -173,23 +135,30 @@ export default function DRRMCCouncilManagement() {
   const handleEdit = (member: CouncilMember) => {
     setEditingMember(member)
     setFormData({
-      name: member.name,
-      position: member.position,
+      name: member.name || "",
+      position: member.position || "",
       department: member.department || "",
-      role: member.role || "",
-      subDepartment: member.subDepartment || "",
-      image: member.image,
-      level: member.level
+      email: member.email || "",
+      phone: member.phone || "",
+      avatar_url: member.avatar_url || "https://res.cloudinary.com/dedcmctqk/image/upload/v1758628068/pioduran_seal_official_fhmwac.webp",
+      bio: member.bio || "",
+      status: member.status || "active",
+      order_index: member.order_index || 0
     })
     setIsDialogOpen(true)
   }
 
-  const handleDelete = (id: number) => {
-    setMembers(prev => prev.filter(member => member.id !== id))
-    toast({
-      title: "Success",
-      description: "Council member deleted successfully",
-    })
+  const handleDelete = async (id: number) => {
+    const supabase = createClient()
+    const { error } = await supabase.from('drrm_council').delete().eq('id', id)
+    if (error) {
+      toast({ title: "Error", description: error.message, variant: "destructive" })
+    } else {
+      toast({ title: "Success", description: "Council member deleted successfully" })
+      // Refresh members
+      const { data } = await supabase.from('drrm_council').select('*').order('id', { ascending: true })
+      setMembers(data || [])
+    }
   }
 
   const resetForm = () => {
@@ -197,10 +166,12 @@ export default function DRRMCCouncilManagement() {
       name: "",
       position: "",
       department: "",
-      role: "",
-      subDepartment: "",
-      image: "https://res.cloudinary.com/dedcmctqk/image/upload/v1758628068/pioduran_seal_official_fhmwac.webp",
-      level: "leadership"
+      email: "",
+      phone: "",
+      avatar_url: "https://res.cloudinary.com/dedcmctqk/image/upload/v1758628068/pioduran_seal_official_fhmwac.webp",
+      bio: "",
+      status: "active",
+      order_index: 0
     })
     setEditingMember(null)
   }
@@ -288,54 +259,76 @@ export default function DRRMCCouncilManagement() {
                       placeholder="Enter department"
                     />
                   </div>
-                  
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div className="space-y-2">
-                      <Label htmlFor="role">Role</Label>
+                      <Label htmlFor="email">Email</Label>
                       <Input
-                        id="role"
-                        name="role"
-                        value={formData.role}
+                        id="email"
+                        name="email"
+                        value={formData.email}
                         onChange={handleInputChange}
-                        placeholder="Enter role"
+                        placeholder="Enter email"
+                        type="email"
                       />
                     </div>
                     <div className="space-y-2">
-                      <Label htmlFor="subDepartment">Sub Department</Label>
+                      <Label htmlFor="phone">Phone</Label>
                       <Input
-                        id="subDepartment"
-                        name="subDepartment"
-                        value={formData.subDepartment}
+                        id="phone"
+                        name="phone"
+                        value={formData.phone}
                         onChange={handleInputChange}
-                        placeholder="Enter sub department"
+                        placeholder="Enter phone number"
+                        type="tel"
                       />
                     </div>
                   </div>
-                  
                   <div className="space-y-2">
-                    <Label htmlFor="image">Image URL</Label>
+                    <Label htmlFor="avatar_url">Image URL</Label>
                     <Input
-                      id="image"
-                      name="image"
-                      value={formData.image}
+                      id="avatar_url"
+                      name="avatar_url"
+                      value={formData.avatar_url}
                       onChange={handleInputChange}
                       placeholder="Enter image URL"
                     />
                   </div>
-                  
                   <div className="space-y-2">
-                    <Label htmlFor="level">Level</Label>
-                    <select
-                      id="level"
-                      name="level"
-                      value={formData.level}
+                    <Label htmlFor="bio">Bio</Label>
+                    <Textarea
+                      id="bio"
+                      name="bio"
+                      value={formData.bio}
                       onChange={handleInputChange}
-                      className="w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-950"
-                    >
-                      <option value="leadership">Leadership</option>
-                      <option value="viceChair">Vice Chairpersons</option>
-                      <option value="cluster">Cluster Members</option>
-                    </select>
+                      placeholder="Enter bio or notes"
+                    />
+                  </div>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="space-y-2">
+                      <Label htmlFor="status">Status</Label>
+                      <select
+                        id="status"
+                        name="status"
+                        value={formData.status}
+                        onChange={handleInputChange}
+                        className="w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-950"
+                      >
+                        <option value="active">Active</option>
+                        <option value="inactive">Inactive</option>
+                      </select>
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="order_index">Order Index</Label>
+                      <Input
+                        id="order_index"
+                        name="order_index"
+                        value={formData.order_index}
+                        onChange={handleInputChange}
+                        type="number"
+                        min={0}
+                        placeholder="Order index (for sorting)"
+                      />
+                    </div>
                   </div>
                   
                   <DialogFooter>
@@ -406,7 +399,7 @@ export default function DRRMCCouncilManagement() {
                   <div className="flex items-start justify-between mb-4">
                     <div className="w-16 h-16 rounded-full bg-gradient-to-br from-blue-950 to-yellow-500 flex items-center justify-center overflow-hidden">
                       <Image
-                        src={member.image}
+                        src={member.avatar_url && member.avatar_url.trim() !== "" ? member.avatar_url : "https://res.cloudinary.com/dedcmctqk/image/upload/v1758628068/pioduran_seal_official_fhmwac.webp"}
                         alt={member.name}
                         width={64}
                         height={64}
