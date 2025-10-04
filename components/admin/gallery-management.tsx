@@ -151,19 +151,32 @@ export default function GalleryManagement() {
     }
 
     try {
+      const { data: { user } } = await supabase.auth.getUser()
+
+      if (!user) {
+        toast({
+          title: "Authentication Error",
+          description: "You must be logged in to perform this action",
+          variant: "destructive",
+        })
+        return
+      }
+
       const imageData = {
         ...formData,
-        uploaded_by: null, // Set to null to avoid placeholder UUID issues
+        uploaded_by: user.id,
       }
 
       if (selectedImage) {
-        // Update existing image
         const { error } = await supabase
           .from("gallery_images")
           .update(imageData)
           .eq("id", selectedImage.id)
 
-        if (error) throw error
+        if (error) {
+          console.error("Update error:", error)
+          throw error
+        }
 
         toast({
           title: "Success",
@@ -171,12 +184,14 @@ export default function GalleryManagement() {
         })
         setIsEditDialogOpen(false)
       } else {
-        // Create new image
         const { error } = await supabase
           .from("gallery_images")
           .insert([imageData])
 
-        if (error) throw error
+        if (error) {
+          console.error("Insert error:", error)
+          throw error
+        }
 
         toast({
           title: "Success",
@@ -186,12 +201,12 @@ export default function GalleryManagement() {
       }
 
       resetForm()
-      fetchImages()
-    } catch (error) {
+      await fetchImages()
+    } catch (error: any) {
       console.error("Error saving image:", error)
       toast({
         title: "Error",
-        description: "Failed to save image",
+        description: error?.message || "Failed to save image. Please check your permissions.",
         variant: "destructive",
       })
     }

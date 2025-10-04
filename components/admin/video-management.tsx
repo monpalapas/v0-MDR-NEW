@@ -416,38 +416,49 @@ export default function VideoManagement() {
     }
 
     try {
+      const { data: { user } } = await supabase.auth.getUser()
+
+      if (!user) {
+        toast({
+          title: "Authentication Error",
+          description: "You must be logged in to perform this action",
+          variant: "destructive",
+        })
+        return
+      }
+
       const videoData = {
         ...formData,
         views: selectedVideo ? selectedVideo.views : 0,
-        uploaded_by: null, // Set to null to avoid placeholder UUID issues
+        uploaded_by: user.id,
       }
-      console.log("Submitting videoData:", JSON.stringify(videoData, null, 2))
 
       if (selectedVideo) {
-        // Update existing video
-        const updateRes = await supabase.from("videos").update(videoData).eq("id", selectedVideo.id)
-        console.log("Supabase update response:", JSON.stringify(updateRes, null, 2))
-        if (updateRes.error) {
-          if (Object.keys(updateRes.error).length === 0) {
-            console.error("Supabase update error: Empty error object. Check your table schema and required fields.")
-          }
-          throw updateRes.error
+        const { error } = await supabase
+          .from("videos")
+          .update(videoData)
+          .eq("id", selectedVideo.id)
+
+        if (error) {
+          console.error("Update error:", error)
+          throw error
         }
+
         toast({
           title: "Success",
           description: "Video updated successfully",
         })
         setIsEditDialogOpen(false)
       } else {
-        // Create new video
-        const insertRes = await supabase.from("videos").insert([videoData])
-        console.log("Supabase insert response:", JSON.stringify(insertRes, null, 2))
-        if (insertRes.error) {
-          if (Object.keys(insertRes.error).length === 0) {
-            console.error("Supabase insert error: Empty error object. Check your table schema and required fields.")
-          }
-          throw insertRes.error
+        const { error } = await supabase
+          .from("videos")
+          .insert([videoData])
+
+        if (error) {
+          console.error("Insert error:", error)
+          throw error
         }
+
         toast({
           title: "Success",
           description: "Video uploaded successfully",
@@ -456,12 +467,12 @@ export default function VideoManagement() {
       }
 
       resetForm()
-      fetchVideos()
-    } catch (error) {
+      await fetchVideos()
+    } catch (error: any) {
       console.error("Error saving video:", error)
       toast({
         title: "Error",
-        description: Object.keys(error || {}).length === 0 ? "Failed to save video. Check required fields and table schema." : "Failed to save video",
+        description: error?.message || "Failed to save video. Please check your permissions.",
         variant: "destructive",
       })
     }
