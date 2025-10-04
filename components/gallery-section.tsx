@@ -1,28 +1,55 @@
 "use client"
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { GalleryHorizontal, Video } from 'lucide-react';
+import { createBrowserClient } from '@supabase/ssr';
+
+interface GalleryImage {
+  id: number;
+  title: string;
+  image_url: string;
+  category: string;
+}
 
 const GallerySection = () => {
   const [galleryImages, setGalleryImages] = useState(false);
+  const [images, setImages] = useState<GalleryImage[]>([]);
+  const [loading, setLoading] = useState(true);
 
-  // Gallery items data
-  const galleryItems = [
-    { id: 1, title: "Community Event", category: "event" },
-    { id: 2, title: "Training Session", category: "training" },
-    { id: 3, title: "Disaster Prep", category: "prep" },
-    { id: 4, title: "Volunteer Work", category: "volunteer" },
-    { id: 5, title: "Emergency Drill", category: "drill" },
-    { id: 6, title: "Community Outreach", category: "outreach" },
-    { id: 7, title: "First Aid", category: "aid" },
-    { id: 8, title: "Evacuation", category: "evacuation" },
-    { id: 9, title: "Relief Distribution", category: "relief" },
-    { id: 10, title: "Awareness Campaign", category: "campaign" }
-  ];
+  const supabase = createBrowserClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+  );
 
-  // Duplicate items for seamless looping
-  const duplicatedItems = [...galleryItems, ...galleryItems, ...galleryItems];
+  useEffect(() => {
+    fetchImages();
+  }, []);
+
+  const fetchImages = async () => {
+    try {
+      const { data, error } = await supabase
+        .from('gallery_images')
+        .select('id, title, image_url, category')
+        .order('created_at', { ascending: false })
+        .limit(12);
+
+      if (error) {
+        console.error('Error fetching gallery images:', error);
+        return;
+      }
+
+      setImages(data || []);
+    } catch (error) {
+      console.error('Error fetching gallery images:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const duplicatedItems = images.length > 0
+    ? [...images, ...images, ...images]
+    : [];
 
   return (
     <div className="flex flex-col justify-center items-center bg-blue-950">
@@ -103,7 +130,7 @@ const GallerySection = () => {
         </div>
 
         {/* Infinity Scrolling Gallery */}
-        <div 
+        <div
           className="relative bg-white p-4"
           style={{ height: '300px' }}
           onMouseEnter={() => setGalleryImages(true)}
@@ -111,20 +138,30 @@ const GallerySection = () => {
         >
           <div className="compact-fade-overlay compact-fade-left"></div>
           <div className="compact-fade-overlay compact-fade-right"></div>
-          <div className={`compact-scrolling-wrapper flex space-x-4 h-full items-center ${galleryImages ? 'opacity-90' : 'opacity-100'} transition-opacity duration-300`}>
-            {duplicatedItems.map((item, index) => (
-              <div 
-                key={`${item.id}-${index}`} 
-                className="compact-gallery-item flex-shrink-0 w-48 h-70 rounded-lg overflow-hidden shadow-md"
-              >
-                <img 
-                  src={`https://placehold.co/200x200/${index % 2 === 0 ? '012184/ffffff' : 'fcd530/012184'}?text=${encodeURIComponent(item.title)}`} 
-                  alt={item.title} 
-                  className="w-full h-full object-cover"
-                />
-              </div>
-            ))}
-          </div>
+          {loading ? (
+            <div className="flex items-center justify-center h-full">
+              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-950"></div>
+            </div>
+          ) : duplicatedItems.length > 0 ? (
+            <div className={`compact-scrolling-wrapper flex space-x-4 h-full items-center ${galleryImages ? 'opacity-90' : 'opacity-100'} transition-opacity duration-300`}>
+              {duplicatedItems.map((item, index) => (
+                <div
+                  key={`${item.id}-${index}`}
+                  className="compact-gallery-item flex-shrink-0 w-48 h-70 rounded-lg overflow-hidden shadow-md"
+                >
+                  <img
+                    src={item.image_url}
+                    alt={item.title}
+                    className="w-full h-full object-cover"
+                  />
+                </div>
+              ))}
+            </div>
+          ) : (
+            <div className="flex items-center justify-center h-full text-gray-500">
+              <p>No images available. Add images through the admin panel.</p>
+            </div>
+          )}
         </div>
 
         {/* Call to Action Section */}
