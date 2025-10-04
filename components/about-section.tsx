@@ -20,10 +20,6 @@ export default function AboutSection() {
     <section id="about" className="py-12 px-4 sm:px-6 lg:px-8 mx-auto relative overflow-hidden">
       {/* Modern elegant background */}
       <div className="absolute inset-0 bg-blue-950"></div>
-      <div className="absolute inset-0" style={{
-        backgroundImage: `radial-gradient(circle at 25px 25px, #052ba0 1px, transparent 2px)`,
-        backgroundSize: '50px 50px'
-      }}></div>
       
       <div className="relative z-10 max-w-6xl mx-auto">
         <div className="text-center mb-12">
