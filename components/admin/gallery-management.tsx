@@ -153,7 +153,7 @@ export default function GalleryManagement() {
     try {
       const imageData = {
         ...formData,
-        uploaded_by: "00000000-0000-0000-0000-000000000000", // Replace with actual user ID
+        uploaded_by: null, // Set to null to avoid placeholder UUID issues
       }
 
       if (selectedImage) {
