@@ -76,7 +76,7 @@ export default function Navigation() {
           {/* Logo/Brand */}
           <Link href="/" className="flex-shrink-0 flex items-center space-x-3 group" aria-label="Go to homepage">
             <Image
-              src="/images/design-mode/logome_h9snnx%281%29%281%29%281%29.webp" onError={e => e.currentTarget.src = '/images/design-mode/logome_h9snnx%281%29%281%29%281%29.webp'}
+              src="https://res.cloudinary.com/dedcmctqk/image/upload/v1758626524/logome_qttbxo.webp" onError={e => e.currentTarget.src = '/images/design-mode/mdrrmo_logo.webp'}
               alt="MDRRMO Pio Duran Official Logo"
               width={48}
               height={48}

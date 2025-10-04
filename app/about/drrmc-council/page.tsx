@@ -172,14 +172,6 @@ export default function DRRMCCouncilPage() {
 
   return (
     <div className="min-h-screen bg-white font-sans" style={{ fontFamily: 'Poppins, sans-serif' }}>
-      {/* Background Pattern */}
-      <div className="absolute inset-0 opacity-5">
-        <div className="absolute inset-0" style={{
-          backgroundImage: `radial-gradient(circle at 1px 1px, #1e3a8a 1px, transparent 0)`,
-          backgroundSize: '20px 20px'
-        }}></div>
-      </div>
-
       <div className="relative z-10">
         {/* Header Section */}
         <header className="bg-blue-950 text-white py-12 md:py-16 relative overflow-hidden">

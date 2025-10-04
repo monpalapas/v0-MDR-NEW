@@ -110,7 +110,7 @@ export function AdminSidebar({ isOpen, onClose, activeSection, onSectionChange }
       {/* Sidebar */}
       <aside
         className={cn(
-          "fixed inset-y-0 left-0 z-50 w-72 transform bg-blue-950 text-white transition-transform duration-300 ease-in-out lg:static lg:translate-x-0",
+          "fixed inset-y-0 left-0 z-50 transform bg-blue-950 text-white transition-transform duration-300 ease-in-out lg:static lg:translate-x-0",
           isOpen ? "translate-x-0" : "-translate-x-full",
         )}
       >

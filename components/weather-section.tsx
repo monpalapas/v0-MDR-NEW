@@ -146,15 +146,10 @@ export default function WeatherSection() {
   }
 
   return (
-    <section className="bg-background">
-      <div className="container mx-auto px-2 py-4">
+    <section className="bg-white">
+      <div className="w-full mx-auto px-2 py-4">
         <div className="mx-auto">
           <div className="bg-gray-200 border border-blue-900 shadow-sm overflow-hidden">
-            {/* Elegant pattern background */}
-            <div className="absolute inset-0 opacity-3" style={{
-              backgroundImage: `radial-gradient(circle at 10px 10px, #6b7280 1px, transparent 1px)`,
-              backgroundSize: '20px 20px'
-            }}></div>
             
             {/* Header */}
             <div className="p-3 bg-blue-950 border-b border-yellow-500 relative">

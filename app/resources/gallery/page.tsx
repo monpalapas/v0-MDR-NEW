@@ -219,14 +219,6 @@ export default function PhotoGallery() {
 
   return (
   <div className="min-h-screen bg-white font-sans" style={{ fontFamily: 'Poppins, sans-serif', fontSize: '1rem' }}>
-      {/* Background Pattern */}
-      <div className="absolute inset-0 opacity-5">
-        <div className="absolute inset-0" style={{
-          backgroundImage: `radial-gradient(circle at 1px 1px, #1e3a8a 1px, transparent 0)`,
-          backgroundSize: '20px 20px'
-        }}></div>
-      </div>
-
       <div className="relative z-10 flex flex-col lg:flex-row h-screen">
         {/* Photo Albums Sidebar - Responsive */}
         <div className="lg:w-80 w-full lg:h-full h-auto bg-white shadow-xl border-r border-blue-950/10 overflow-y-auto">

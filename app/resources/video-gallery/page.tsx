@@ -213,14 +213,6 @@ export default function VideoGallery() {
 
   return (
   <div className="min-h-screen bg-white font-sans" style={{ fontFamily: 'Poppins, sans-serif', fontSize: '1rem' }}>
-      {/* Background Pattern */}
-      <div className="absolute inset-0 opacity-5">
-        <div className="absolute inset-0" style={{
-          backgroundImage: `radial-gradient(circle at 1px 1px, #1e3a8a 1px, transparent 0)`,
-          backgroundSize: '20px 20px'
-        }}></div>
-      </div>
-
       <div className="relative z-10">
         {/* Main Gallery */}
         <div className="p-4 md:p-8">
