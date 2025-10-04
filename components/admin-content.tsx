@@ -1,451 +1,219 @@
-import React, { useState } from 'react';
-import { X, MapPin, Camera, AlertTriangle } from 'lucide-react';
-import { BARANGAYS, INCIDENT_TYPES } from '../../utils/constants';
-import { validateRequired, validatePhone, sanitizeInput } from '../../utils/validation';
-import { validateFileUpload, rateLimit } from '../../utils/security';
-import { supabase } from '../../lib/supabase';
+import DRRMCCouncilManagement from "./admin/drrm-council-management"
+import PersonnelManagement from "./admin/personnel-management"
+import AnnouncementManagement from "./admin/announcement-management"
+import NewsManagement from "./admin/news-management"
+import ActivitiesManagement from "./admin/activities-management"
+import VideoManagement from "./admin/video-management"
+import GalleryManagement from "./admin/gallery-management"
+import ResourcesManagement from "./admin/resources-management"
+import IncidentManagement from "./admin/incident-management"
+import MapsManagement from "./admin/maps-management"
+import PublicMessage from "./admin/public-message"
+import QuickLinksManagement from "./admin/quick-links-management"
+import AlertsManagement from "./admin/alerts-management"
+import HotlineManagement from "./admin/hotline-management"
+import { default as BarangayPortal } from "./admin/barangay-portal"
+import { Users, AlertTriangle, UserCheck, Wrench, Megaphone, Newspaper, CalendarPlus, Upload, Plus, User, Edit, CloudSun, Droplets, Wind, CloudRain, Map, FileText, Image, Video, MessageCircle } from "lucide-react"
 
-interface IncidentModalProps {
-  isOpen: boolean;
-  onClose: () => void;
-  onSubmit: (formData: any) => void;
+interface AdminContentProps {
+  activeSection: string
 }
 
-const IncidentModal: React.FC<IncidentModalProps> = ({ isOpen, onClose, onSubmit }) => {
-  const [formData, setFormData] = useState({
-    reporterName: '',
-    contactNumber: '',
-    location: '',
-    landmark: '',
-    incidentType: 'Fire',
-    description: '',
-    urgency: 'HIGH',
-    agreement: false
-  });
-
-  const [imageFile, setImageFile] = useState<File | null>(null);
-  const [imagePreview, setImagePreview] = useState<string | null>(null);
-  const [errors, setErrors] = useState<Record<string, string>>({});
-  const [isUploading, setIsUploading] = useState(false);
-
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
-    const { name, value, type } = e.target;
-    const checked = (e.target as HTMLInputElement).checked;
-    
-    setFormData(prev => ({
-      ...prev,
-      [name]: type === 'checkbox' ? checked : sanitizeInput(value)
-    }));
-
-    // Clear error when user starts typing
-    if (errors[name]) {
-      setErrors(prev => ({ ...prev, [name]: '' }));
+export default function AdminContent({ activeSection }: AdminContentProps) {
+  const renderContent = () => {
+    switch (activeSection) {
+      case "dashboard":
+        return <DashboardContent />
+      case "drrm-council-management":
+        return <DRRMCCouncilManagement />
+      case "personnel-management":
+        return <PersonnelManagement />
+      case "announcement-management":
+        return <AnnouncementManagement />
+      case "news-management":
+        return <NewsManagement />
+      case "activities-management":
+        return <ActivitiesManagement />
+      case "video-management":
+        return <VideoManagement />
+      case "gallery-management":
+        return <GalleryManagement />
+      case "resources-management":
+        return <ResourcesManagement />
+      case "incident-management":
+        return <IncidentManagement />
+      case "maps-management":
+        return <MapsManagement />
+      case "public-message":
+        return <PublicMessage />
+      case "quick-links-management":
+        return <QuickLinksManagement />
+      case "alerts-management":
+        return <AlertsManagement />
+      case "hotline-management":
+        return <HotlineManagement />
+      case "barangay-portal":
+        return <BarangayPortal />
+      default:
+        return <DashboardContent />
     }
-  };
-
-  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-
-    const validation = validateFileUpload(file, {
-      maxSize: 5 * 1024 * 1024,
-      allowedTypes: ['image/*']
-    });
-    
-    if (!validation.valid) {
-      setErrors(prev => ({ ...prev, image: validation.error || 'Invalid file' }));
-      return;
-    }
-
-    setImageFile(file);
-    setErrors(prev => ({ ...prev, image: '' }));
-
-    // Create preview
-    const reader = new FileReader();
-    reader.onload = (e) => {
-      setImagePreview(e.target?.result as string);
-    };
-    reader.readAsDataURL(file);
-  };
-
-  const removeImage = () => {
-    setImageFile(null);
-    setImagePreview(null);
-    setErrors(prev => ({ ...prev, image: '' }));
-  };
-
-  const getLocation = () => {
-    if (!navigator.geolocation) {
-      alert('Geolocation is not supported by this browser');
-      return;
-    }
-
-    navigator.geolocation.getCurrentPosition(
-      (position) => {
-        const { latitude, longitude } = position.coords;
-        setFormData(prev => ({
-          ...prev,
-          landmark: `Lat: ${latitude.toFixed(6)}, Long: ${longitude.toFixed(6)}`
-        }));
-      },
-      (error) => {
-        let message = 'Unable to get location. Please enter manually.';
-        switch (error.code) {
-          case error.PERMISSION_DENIED:
-            message = 'Location access denied. Please enable location services.';
-            break;
-          case error.POSITION_UNAVAILABLE:
-            message = 'Location information is unavailable.';
-            break;
-          case error.TIMEOUT:
-            message = 'Location request timed out.';
-            break;
-        }
-        alert(message);
-      }
-    );
-  };
-
-  const validateForm = () => {
-    const newErrors: Record<string, string> = {};
-
-    if (!validateRequired(formData.reporterName)) {
-      newErrors.reporterName = 'Name is required';
-    }
-
-    if (!validateRequired(formData.contactNumber)) {
-      newErrors.contactNumber = 'Contact number is required';
-    } else if (!validatePhone(formData.contactNumber)) {
-      newErrors.contactNumber = 'Please enter a valid phone number';
-    }
-
-    if (!formData.agreement) {
-      newErrors.agreement = 'You must agree to the terms';
-    }
-
-    setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
-  };
-
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    
-    // Rate limiting
-    if (!rateLimit('incident_report', 3, 60000)) {
-      setErrors(prev => ({ ...prev, form: 'Too many reports submitted. Please wait before submitting again.' }));
-      return;
-    }
-    
-    if (!validateForm()) {
-      return;
-    }
-
-    setIsUploading(true);
-
-    // Generate reference number
-    const referenceNumber = `RD-${new Date().getFullYear()}-${String(Math.floor(Math.random() * 9999) + 1).padStart(4, '0')}`;
-    
-    const incidentData = {
-      reference_number: referenceNumber,
-      reporter_name: formData.reporterName,
-      contact_number: formData.contactNumber,
-      location: formData.location,
-      landmark: formData.landmark,
-      incident_type: formData.incidentType,
-      description: formData.description,
-      urgency: formData.urgency,
-      status: 'pending' as const,
-      image_url: imagePreview,
-      imageFile
-    };
-
-    onSubmit(incidentData);
-    setIsUploading(false);
-    // Reset form
-    setFormData({
-      reporterName: '',
-      contactNumber: '',
-      location: '',
-      landmark: '',
-      incidentType: 'Fire',
-      description: '',
-      urgency: 'HIGH',
-      agreement: false
-    });
-    setImageFile(null);
-    setImagePreview(null);
-    setErrors({});
-  };
-
-  if (!isOpen) return null;
+  }
 
   return (
-    <div className="fixed inset-0 z-50 bg-black bg-opacity-50 flex items-center justify-center p-4 pt-20">
-      <div className="bg-white rounded-lg p-6 max-w-2xl w-full max-h-[90vh] overflow-y-auto">
-        <div className="flex justify-between items-center mb-4">
-          <h3 className="text-xl font-bold text-blue-900">
-            Report an Emergency or Disaster-Related Incident
-          </h3>
-          <button onClick={onClose} className="text-gray-500 hover:text-gray-700">
-            <X size={24} />
-          </button>
+    <main className="flex-1 overflow-y-auto scrollbar-thin scrollbar-thumb-blue-800 scrollbar-track-blue-900 p-3 sm:p-4 lg:p-6">
+      {renderContent()}
+    </main>
+  )
+}
+
+function DashboardContent() {
+  return (
+    <>
+      {/* Top Stats */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4 sm:gap-6 mb-8">
+        <StatCard title="Total Personnel" value="24" icon={<Users className="w-7 h-7 text-blue-700" />} gradient="from-blue-100 to-blue-300" />
+        <StatCard title="Active Incidents" value="3" icon={<AlertTriangle className="w-7 h-7 text-red-600" />} gradient="from-red-100 to-red-300" />
+        <StatCard title="Response Teams" value="8" icon={<UserCheck className="w-7 h-7 text-green-600" />} gradient="from-green-100 to-green-300" />
+        <StatCard title="Equipment Ready" value="95%" icon={<Wrench className="w-7 h-7 text-yellow-600" />} gradient="from-yellow-100 to-yellow-300" />
+      </div>
+
+      {/* Quick Actions & Recent Activity */}
+      <div className="grid grid-cols-1 xl:grid-cols-3 gap-4 sm:gap-6 mb-8">
+        <div className="xl:col-span-2">
+          <div className="bg-gradient-to-br from-blue-50 to-blue-100 rounded-xl shadow p-6">
+            <h2 className="text-xl font-bold text-blue-950 mb-6">Quick Actions</h2>
+            <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+              <ActionButton label="Add Announcement" icon={<Megaphone className="w-6 h-6 text-yellow-500" />} />
+              <ActionButton label="Add News" icon={<Newspaper className="w-6 h-6 text-yellow-500" />} />
+              <ActionButton label="Add Activity" icon={<CalendarPlus className="w-6 h-6 text-yellow-500" />} />
+              <ActionButton label="Upload Media" icon={<Upload className="w-6 h-6 text-yellow-500" />} />
+            </div>
+          </div>
         </div>
-
-        {/* Emergency Notice */}
-        <div className="bg-red-50 border-l-4 border-red-500 p-4 mb-6 flex items-start">
-          <AlertTriangle className="text-red-500 text-xl mr-3 mt-1" size={20} />
-          <div>
-            <h4 className="font-bold text-red-700 mb-1">Emergency Notice</h4>
-            <p className="text-sm text-gray-700">
-              Use this secure form to report emergencies, hazards, or disaster-related incidents within the Municipality of Pio Duran. All submissions are reviewed by MDRRMO responders.
-            </p>
+        <div className="bg-gradient-to-br from-white to-blue-50 rounded-xl shadow p-6">
+          <h2 className="text-xl font-bold text-blue-950 mb-6">Recent Activity</h2>
+          <div className="space-y-4">
+            <RecentActivity icon={<Plus className="w-6 h-6 text-yellow-500" />} title="New announcement posted" time="2 minutes ago" />
+            <RecentActivity icon={<User className="w-6 h-6 text-blue-950" />} title="New user registered" time="15 minutes ago" />
+            <RecentActivity icon={<Edit className="w-6 h-6 text-red-500" />} title="News article updated" time="1 hour ago" />
           </div>
         </div>
+      </div>
 
-        <form onSubmit={handleSubmit} className="space-y-6">
-          {/* Personal Details */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+      {/* Events & Weather */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
+        <div className="bg-gradient-to-br from-white to-blue-50 rounded-xl shadow p-6">
+          <h2 className="text-xl font-bold text-blue-950 mb-6">Upcoming Events</h2>
+          <div className="space-y-4">
+            <EventCard color="blue" title="Community Disaster Preparedness Training" date="Dec 15, 2024 • 9:00 AM" location="Barangay Hall, Poblacion" />
+            <EventCard color="yellow" title="Emergency Equipment Check" date="Dec 18, 2024 • 2:00 PM" location="MDRRMO Office" />
+            <EventCard color="green" title="Monthly Coordination Meeting" date="Dec 20, 2024 • 10:00 AM" location="Conference Room" />
+          </div>
+        </div>
+        <div className="bg-gradient-to-br from-yellow-50 to-white rounded-xl shadow p-6">
+          <h2 className="text-xl font-bold text-blue-950 mb-6">Weather Overview</h2>
+          <div className="flex items-center justify-between mb-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Your Name (Required)
-              </label>
-              <input
-                type="text"
-                name="reporterName"
-                value={formData.reporterName}
-                onChange={handleInputChange}
-                className={`w-full px-4 py-2 border rounded-md focus:ring-blue-500 focus:border-blue-500 ${
-                  errors.reporterName ? 'border-red-500' : 'border-gray-300'
-                }`}
-              />
-              {errors.reporterName && (
-                <p className="text-red-500 text-sm mt-1">{errors.reporterName}</p>
-              )}
+              <p className="text-3xl font-bold text-blue-950">28°C</p>
+              <p className="text-base text-gray-600">Partly Cloudy</p>
             </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Contact Number (Required)
-              </label>
-              <input
-                type="tel"
-                name="contactNumber"
-                value={formData.contactNumber}
-                onChange={handleInputChange}
-                className={`w-full px-4 py-2 border rounded-md focus:ring-blue-500 focus:border-blue-500 ${
-                  errors.contactNumber ? 'border-red-500' : 'border-gray-300'
-                }`}
-              />
-              {errors.contactNumber && (
-                <p className="text-red-500 text-sm mt-1">{errors.contactNumber}</p>
-              )}
+            <div className="w-16 h-16 bg-yellow-100 rounded-full flex items-center justify-center">
+              <CloudSun className="text-yellow-600 w-10 h-10" />
             </div>
           </div>
-
-          {/* Location */}
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Location of Incident
-            </label>
-            <select
-              name="location"
-              value={formData.location}
-              onChange={handleInputChange}
-              className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500 mb-2"
-            >
-              <option value="">Select Barangay</option>
-              {BARANGAYS.map((barangay) => (
-                <option key={barangay} value={barangay}>
-                  {barangay}
-                </option>
-              ))}
-            </select>
-            <input
-              type="text"
-              name="landmark"
-              value={formData.landmark}
-              onChange={handleInputChange}
-              placeholder="Nearest landmark or specific location"
-              className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
-            />
-            <button
-              type="button"
-              onClick={getLocation}
-              className="mt-2 text-sm text-blue-600 hover:text-blue-800 flex items-center"
-            >
-              <MapPin className="mr-1" size={16} />
-              Use My Current Location
-            </button>
+          <div className="grid grid-cols-3 gap-2">
+            <WeatherStat label="Humidity" value="78%" icon={<Droplets className="w-5 h-5 text-blue-400 mx-auto" />} />
+            <WeatherStat label="Wind" value="12 km/h" icon={<Wind className="w-5 h-5 text-blue-400 mx-auto" />} />
+            <WeatherStat label="Rain" value="10%" icon={<CloudRain className="w-5 h-5 text-blue-400 mx-auto" />} />
           </div>
+        </div>
+      </div>
 
-          {/* Incident Type */}
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Type of Incident
-            </label>
-            <select
-              name="incidentType"
-              value={formData.incidentType}
-              onChange={handleInputChange}
-              className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
-            >
-              {INCIDENT_TYPES.map((type) => (
-                <option key={type} value={type}>
-                  {type}
-                </option>
-              ))}
-            </select>
-          </div>
+      {/* Incident Reports Summary */}
+      <div className="mt-8 bg-gradient-to-br from-white to-blue-50 rounded-xl shadow p-6">
+        <h2 className="text-xl font-bold text-blue-950 mb-6">Incident Reports Summary</h2>
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+          <IncidentStat color="red" value="12" label="Flood Reports" />
+          <IncidentStat color="orange" value="5" label="Landslide Reports" />
+          <IncidentStat color="blue" value="8" label="Road Incidents" />
+          <IncidentStat color="green" value="3" label="Other Reports" />
+        </div>
+      </div>
+    </>
+  )
+}
 
-          {/* Description */}
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Incident Description
-            </label>
-            <textarea
-              name="description"
-              value={formData.description}
-              onChange={handleInputChange}
-              rows={4}
-              placeholder="Provide a detailed description: what happened, how many people affected, visible risks..."
-              className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
-            />
-          </div>
-
-          {/* Urgency Level */}
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Urgency Level
-            </label>
-            <div className="flex space-x-4">
-              {['LOW', 'MEDIUM', 'HIGH'].map((level) => (
-                <label key={level} className="inline-flex items-center">
-                  <input
-                    type="radio"
-                    name="urgency"
-                    value={level}
-                    checked={formData.urgency === level}
-                    onChange={handleInputChange}
-                    className={`h-5 w-5 focus:ring-2 ${
-                      level === 'LOW'
-                        ? 'text-green-500 focus:ring-green-500'
-                        : level === 'MEDIUM'
-                        ? 'text-yellow-500 focus:ring-yellow-500'
-                        : 'text-red-500 focus:ring-red-500'
-                    }`}
-                  />
-                  <span className="ml-2">
-                    {level} {level === 'HIGH' && '(require immediate attention)'}
-                  </span>
-                </label>
-              ))}
-            </div>
-          </div>
-
-          {/* Photo Upload */}
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Upload Photo (Optional)
-            </label>
-            <div className="mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border-gray-300 border-dashed rounded-md">
-              <div className="space-y-1 text-center">
-                <Camera className="mx-auto h-12 w-12 text-gray-400" />
-                <div className="flex text-sm text-gray-600 justify-center">
-                  <label className="relative cursor-pointer bg-white rounded-md font-medium text-blue-600 hover:text-blue-500 focus-within:outline-none">
-                    <span>Upload a file</span>
-                    <input
-                      type="file"
-                      className="sr-only"
-                      accept="image/*"
-                      onChange={handleImageChange}
-                      disabled={isUploading}
-                    />
-                  </label>
-                  <p className="pl-1">or drag and drop</p>
-                </div>
-                <p className="text-xs text-gray-500">PNG, JPG, GIF up to 5MB</p>
-              </div>
-            </div>
-
-            {/* Image Preview */}
-            {imagePreview && (
-              <div className="mt-2">
-                <div className="flex items-center justify-between bg-gray-50 p-2 rounded-md">
-                  <div className="flex items-center">
-                    <img
-                      src={imagePreview}
-                      alt="Preview"
-                      className="h-20 w-20 object-cover rounded-md"
-                    />
-                    <div className="ml-3">
-                      <p className="text-sm font-medium text-gray-900">
-                        {imageFile?.name}
-                      </p>
-                      <p className="text-xs text-gray-500">
-                        {imageFile && (imageFile.size / 1024 / 1024).toFixed(2)} MB
-                      </p>
-                      <p className="text-xs text-green-600">
-                        ✓ Ready to upload
-                      </p>
-                    </div>
-                  </div>
-                  <button
-                    type="button"
-                    onClick={removeImage}
-                    className="text-red-600 hover:text-red-800"
-                    disabled={isUploading}
-                  >
-                    <X size={20} />
-                  </button>
-                </div>
-              </div>
-            )}
-
-            {/* Upload Error */}
-            {errors.image && (
-              <div className="mt-2 bg-red-50 border-l-4 border-red-500 p-4 flex items-start">
-                <AlertTriangle className="text-red-500 mr-3 mt-1" size={16} />
-                <p className="text-sm text-red-700">{errors.image}</p>
-              </div>
-            )}
-          </div>
-
-          {/* Agreement */}
-          <div className="flex items-start">
-            <div className="flex items-center h-5">
-              <input
-                type="checkbox"
-                name="agreement"
-                checked={formData.agreement}
-                onChange={handleInputChange}
-                className={`focus:ring-blue-500 h-4 w-4 text-blue-600 border-gray-300 rounded ${
-                  errors.agreement ? 'border-red-500' : ''
-                }`}
-              />
-            </div>
-            <div className="ml-3 text-sm">
-              <label className="font-medium text-gray-700">
-                I confirm that the information provided is accurate to the best of my knowledge.
-              </label>
-              {errors.agreement && (
-                <p className="text-red-500 text-sm mt-1">{errors.agreement}</p>
-              )}
-            </div>
-          </div>
-
-          {/* Submit Button */}
-          <div className="pb-4">
-            <button
-              type="submit"
-              className="w-full bg-gradient-to-r from-red-600 to-red-700 text-white font-bold py-3 px-6 rounded-md hover:from-red-700 hover:to-red-800 transition duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
-              disabled={isUploading}
-            >
-              {isUploading ? 'Submitting Report...' : 'Submit Report'}
-            </button>
-          </div>
-        </form>
+// --- Dashboard UI Helper Components ---
+type StatCardProps = { title: string; value: string; icon: React.ReactNode; gradient: string };
+function StatCard({ title, value, icon, gradient }: StatCardProps) {
+  return (
+    <div className={`rounded-xl shadow bg-gradient-to-br ${gradient} p-5 flex items-center justify-between`}>
+      <div>
+        <p className="text-sm font-medium text-gray-600">{title}</p>
+        <p className="text-3xl font-bold text-blue-950 mt-1">{value}</p>
+      </div>
+      <div className="flex items-center justify-center w-12 h-12 rounded-full bg-white/70 shadow-inner">
+        {icon}
       </div>
     </div>
-  );
-};
+  )
+}
 
-export default IncidentModal;
+type ActionButtonProps = { label: string; icon: React.ReactNode };
+function ActionButton({ label, icon }: ActionButtonProps) {
+  return (
+    <button className="group bg-white hover:bg-blue-100 rounded-lg p-4 flex flex-col items-center transition-colors focus:outline-none focus:ring-2 focus:ring-blue-950/20 shadow">
+      <div className="w-10 h-10 bg-blue-950 group-hover:bg-blue-800 rounded-full flex items-center justify-center mb-2 transition-colors">
+        {icon}
+      </div>
+      <span className="text-sm font-medium text-blue-950 text-center">{label}</span>
+    </button>
+  )
+}
+
+type RecentActivityProps = { icon: React.ReactNode; title: string; time: string };
+function RecentActivity({ icon, title, time }: RecentActivityProps) {
+  return (
+    <div className="flex items-start gap-3">
+      <div className="w-9 h-9 rounded-full bg-blue-100 flex items-center justify-center">{icon}</div>
+      <div className="min-w-0">
+        <p className="text-base font-medium text-blue-950">{title}</p>
+        <p className="text-xs text-gray-500">{time}</p>
+      </div>
+    </div>
+  )
+}
+
+type EventCardProps = { color: string; title: string; date: string; location: string };
+function EventCard({ color, title, date, location }: EventCardProps) {
+  const border = color === "blue" ? "border-blue-950" : color === "yellow" ? "border-yellow-500" : color === "green" ? "border-green-500" : "border-gray-300"
+  return (
+    <div className={`border-l-4 ${border} pl-4 py-2 bg-white/80 rounded-lg shadow-sm`}>
+      <h3 className="font-medium text-blue-950">{title}</h3>
+      <p className="text-sm text-gray-600">{date}</p>
+      <p className="text-xs text-gray-500 mt-1">{location}</p>
+    </div>
+  )
+}
+
+type WeatherStatProps = { label: string; value: string; icon: React.ReactNode };
+function WeatherStat({ label, value, icon }: WeatherStatProps) {
+  return (
+    <div className="text-center">
+      <div className="mb-1">{icon}</div>
+      <p className="text-sm text-gray-600">{label}</p>
+      <p className="font-medium">{value}</p>
+    </div>
+  )
+}
+
+type IncidentStatProps = { color: string; value: string; label: string };
+function IncidentStat({ color, value, label }: IncidentStatProps) {
+  const colorClass = color === "red" ? "text-red-600 bg-red-50" : color === "orange" ? "text-orange-600 bg-orange-50" : color === "blue" ? "text-blue-600 bg-blue-50" : "text-green-600 bg-green-50"
+  return (
+    <div className={`text-center p-4 rounded-lg ${colorClass}`}>
+      <p className="text-2xl font-bold">{value}</p>
+      <p className="text-sm text-gray-600">{label}</p>
+    </div>
+  )
+}

@@ -218,7 +218,7 @@ export default function PhotoGallery() {
   })
 
   return (
-    <div className="min-h-screen bg-white font-sans" style={{ fontFamily: 'Poppins, sans-serif' }}>
+  <div className="min-h-screen bg-white font-sans" style={{ fontFamily: 'Poppins, sans-serif', fontSize: '1rem' }}>
       {/* Background Pattern */}
       <div className="absolute inset-0 opacity-5">
         <div className="absolute inset-0" style={{
@@ -297,8 +297,8 @@ export default function PhotoGallery() {
         <div className="flex-1 overflow-y-auto">
           <div className="p-4 md:p-8">
             <div className="mb-6 md:mb-8">
-              <h1 className="text-2xl md:text-4xl font-bold text-blue-950 mb-2">{galleryTitle}</h1>
-              <p className="text-blue-950/70 text-sm md:text-base">{galleryDescription}</p>
+              <h1 className="text-lg font-bold text-blue-950 mb-2">{galleryTitle}</h1>
+              <p className="text-blue-950/70 text-base">{galleryDescription}</p>
             </div>
 
             {/* Search and Filter Controls */}

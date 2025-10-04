@@ -56,7 +56,7 @@
     "leaflet": "latest",
     "lib": "latest",
     "lucide-react": "^0.454.0",
-    "next": "15.2.4",
+    "next": "^15.5.4",
     "next-themes": "latest",
     "react": "^19",
     "react-day-picker": "latest",
@@ -69,7 +69,7 @@
     "sonner": "latest",
     "tailwind-merge": "^2.5.5",
     "tailwindcss-animate": "^1.0.7",
-    "utils": "latest",
+    "utils": "^0.2.2",
     "vaul": "latest",
     "zod": "3.25.67"
   },

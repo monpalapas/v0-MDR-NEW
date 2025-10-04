@@ -28,8 +28,8 @@ const menuSections = [
     label: "About Us",
     icon: Info,
     items: [
-      { id: "drrm-council", label: "DRRM Council", path: "/components/admin/drrm-council-management.tsx" },
-      { id: "personnel", label: "MDRRMO Personnel", path: "/components/admin/personnel-management.tsx" },
+      { id: "drrm-council-management", label: "DRRM Council", path: "/components/admin/drrm-council-management.tsx" },
+      { id: "personnel-management", label: "MDRRMO Personnel", path: "/components/admin/personnel-management.tsx" },
     ],
   },
   {
@@ -37,10 +37,10 @@ const menuSections = [
     label: "Information",
     icon: Megaphone,
     items: [
-      { id: "announcement", label: "Announcement", path: "/components/admin/announcement-management.tsx" },
-      { id: "weather", label: "Weather Updates", path: "" },
-      { id: "news", label: "News & Advisories", path: "/components/admin/news-management.tsx" },
-      { id: "activities", label: "Events & Activities", path: "/components/admin/activities-management.tsx" },
+      { id: "announcement-management", label: "Announcement", path: "/components/admin/announcement-management.tsx" },
+      { id: "weather-updates", label: "Weather Updates", path: "" },
+      { id: "news-management", label: "News & Advisories", path: "/components/admin/news-management.tsx" },
+      { id: "activities-management", label: "Events & Activities", path: "/components/admin/activities-management.tsx" },
     ],
   },
   {
@@ -48,10 +48,10 @@ const menuSections = [
     label: "Resources",
     icon: FolderOpen,
     items: [
-      { id: "video", label: "Video Gallery", path: "/components/admin/video-management.tsx" },
-      { id: "gallery", label: "Photo Gallery", path: "/components/admin/gallery-management.tsx" },
-      { id: "documents", label: "Public Documents", path: "/components/admin/resources-management.tsx" },
-      { id: "maps", label: "Hazard Maps", path: "/components/admin/maps-management.tsx" },
+      { id: "video-management", label: "Video Gallery", path: "/components/admin/video-management.tsx" },
+      { id: "gallery-management", label: "Photo Gallery", path: "/components/admin/gallery-management.tsx" },
+      { id: "resources-management", label: "Public Documents", path: "/components/admin/resources-management.tsx" },
+      { id: "maps-management", label: "Hazard Maps", path: "/components/admin/maps-management.tsx" },
     ],
   },
   {
@@ -59,7 +59,7 @@ const menuSections = [
     label: "Reports",
     icon: ClipboardList,
     items: [
-      { id: "incident", label: "Incident Report", path: "/components/admin/incident-management.tsx" },
+      { id: "incident-management", label: "Incident Report", path: "/components/admin/incident-management.tsx" },
       { id: "public-message", label: "Public Message", path: "/components/admin/public-message.tsx" },
     ],
   },
@@ -68,10 +68,10 @@ const menuSections = [
     label: "Others",
     icon: LayoutDashboard,
     items: [
-      { id: "quick-links", label: "Quick Links", path: "/components/admin/quick-links-management.tsx" },
-      { id: "alerts", label: "Alert", path: "/components/admin/alerts-management.tsx" },
-      { id: "hotlines", label: "Hotlines", path: "/components/admin/hotline-management.tsx" },
-      { id: "barangay", label: "Barangay Portal", path: "/components/admin/barangay-portal.tsx" },
+      { id: "quick-links-management", label: "Quick Links", path: "/components/admin/quick-links-management.tsx" },
+      { id: "alerts-management", label: "Alert", path: "/components/admin/alerts-management.tsx" },
+      { id: "hotlines-management", label: "Hotlines", path: "/components/admin/hotline-management.tsx" },
+      { id: "barangay-portal", label: "Barangay Portal", path: "/components/admin/barangay-portal.tsx" },
     ],
   },
   {
