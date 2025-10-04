@@ -29,18 +29,7 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog"
-import { 
-  Video, 
-  Plus, 
-  Search, 
-  Edit, 
-  Trash2, 
-  Play, 
-  Calendar,
-  Tag,
-  Eye,
-  Upload
-} from "lucide-react"
+import { Video, Plus, Search, CreditCard as Edit, Trash2, Play, Calendar, Tag, Eye, Upload } from "lucide-react"
 import { useToast } from "@/hooks/use-toast"
 
 interface VideoItem {

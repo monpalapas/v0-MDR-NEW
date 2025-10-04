@@ -27,19 +27,7 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog"
-import { 
-  Images, 
-  Plus, 
-  Search, 
-  Edit, 
-  Trash2, 
-  Upload, 
-  Eye, 
-  Calendar,
-  Tag,
-  Hash,
-  Download
-} from "lucide-react"
+import { Images, Plus, Search, CreditCard as Edit, Trash2, Upload, Eye, Calendar, Tag, Hash, Download } from "lucide-react"
 import { useToast } from "@/hooks/use-toast"
 
 interface GalleryImage {
